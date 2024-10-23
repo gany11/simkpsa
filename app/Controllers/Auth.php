@@ -20,13 +20,13 @@ class Auth extends BaseController
         $model = new Pengguna_model;
         $getPengguna = $model->getPengguna($username, $password)->getRow();
         if (isset($getPengguna)) {
-            // $session->set([
-            //     'username' => $getPengguna->username,
-            //     'nama' => (empty($getPengguna->nama) ? $getPengguna->username : $getPengguna->nama)
-            // ]);
-            // return redirect()->to('/');
-            $session->setFlashdata('sukses', 'Berhasil! Username atau password yang Anda masukkan benar!');
-            return redirect()->back();
+            $session->set([
+                'username' => $getPengguna->username,
+                'nama' => (empty($getPengguna->nama) ? $getPengguna->username : $getPengguna->nama)
+            ]);
+            return redirect()->to('/');
+            // $session->setFlashdata('sukses', 'Berhasil! Username atau password yang Anda masukkan benar!');
+            // return redirect()->back();
         } else {
             $session->setFlashdata('error', 'Gagal! Username atau password yang Anda masukkan salah!');
             return redirect()->back();
@@ -34,10 +34,10 @@ class Auth extends BaseController
     }
 
     //Logout
-    // public function out()
-    // {   
-    //     $session = \Config\Services::session();
-    //     $session->destroy();
-    //     return redirect()->to('/login');
-    // }
+    public function out()
+    {   
+        $session = \Config\Services::session();
+        $session->destroy();
+        return redirect()->to('/login');
+    }
 }
