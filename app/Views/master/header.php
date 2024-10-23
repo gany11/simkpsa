@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><?=$title?></title>
+  <title>PT Perta Sakti Abadi | <?=$title?></title>
 
   <link rel="icon" type="image/x-icon" href="<?php echo base_url('favicon.ico');?>">
   <!-- Google Font: Source Sans Pro -->

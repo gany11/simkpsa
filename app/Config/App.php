@@ -17,7 +17,7 @@ class App extends BaseConfig
      * E.g., http://example.com/
      */
     // public string $baseURL = 'http://localhost:8080/';
-    public string $baseURL = 'http://192.168.0.173:8082/';
+    public string $baseURL = 'http://192.168.172.39:8082/';
     // php spark serve --host 0.0.0.0 --port 8081
 
     /**

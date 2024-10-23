@@ -13,3 +13,6 @@ $routes->add('/login/in', 'Auth::in');
 
 //Logout
 $routes->add('/logout', 'Auth::out', ['filter' => 'login']);
+
+// Profil
+$routes->get('/profil', 'Admin::profilindex', ['filter' => 'login']);
