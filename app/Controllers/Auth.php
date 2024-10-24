@@ -21,6 +21,7 @@ class Auth extends BaseController
         $getPengguna = $model->getPengguna($username, $password)->getRow();
         if (isset($getPengguna)) {
             $session->set([
+                'id' => $getPengguna->id,
                 'username' => $getPengguna->username,
                 'nama' => (empty($getPengguna->nama) ? $getPengguna->username : $getPengguna->nama)
             ]);

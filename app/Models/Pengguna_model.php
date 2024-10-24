@@ -16,12 +16,16 @@ class Pengguna_model extends Model
             return $this->getWhere(['username' => $username, 'password' => $password]);
         }     
     }
- 
-    // public function savePengguna($data)
-    // {
-    //     $builder = $this->db->table($this->table);
-    //     return $builder->insert($data);
-    // }
+
+    public function getByUsername($username)
+    {
+        return $this->where('username', $username)->first();
+    }
+
+    public function getById($id)
+    {
+        return $this->where('id', $id)->first();
+    }
 
     public function editPengguna($data, $id)
     {
@@ -29,10 +33,4 @@ class Pengguna_model extends Model
         $builder->where('id', $id);
         return $builder->update($data);
     }
-
-    // public function hapusPengguna($id)
-    // {
-    //     $builder = $this->db->table($this->table);
-    //     return $builder->delete(['id' => $id]);
-    // }
 }
