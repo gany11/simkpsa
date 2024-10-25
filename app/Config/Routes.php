@@ -14,6 +14,13 @@ $routes->add('/login/in', 'Auth::in');
 //Logout
 $routes->add('/logout', 'Auth::out', ['filter' => 'login']);
 
+// Pengeluaran
+$routes->get('/pengeluaran', 'Admin::pengeluaranindex', ['filter' => 'login']);
+$routes->get('/pengeluaran/tambah', 'Admin::pengeluaranaddindex', ['filter' => 'login']);
+$routes->add('/pengeluaran/save', 'Admin::pengeluaransave', ['filter' => 'login']);
+$routes->add('/pengeluaran/edit/(:num)', 'Admin::pengeluaraneditindex/$1', ['filter' => 'login']);
+$routes->add('/pengeluaran/delete/(:num)', 'Admin::pengeluarandelete/$1', ['filter' => 'login']);
+
 // Produk
 $routes->get('/produk', 'Admin::produkindex', ['filter' => 'login']);
 $routes->get('/produk/edit', 'Admin::produkedit', ['filter' => 'login']);

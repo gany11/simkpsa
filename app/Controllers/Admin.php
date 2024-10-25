@@ -20,6 +20,124 @@ class Admin extends BaseController
         echo view('master/footer', $data);
     }
 
+    //Pengeluaran
+    public function pengeluaranindex()
+    {
+        $data['title']     = 'Pengeluaran';
+        $data['page']     = 'pengeluaran';
+        $model = new Expense_model();
+        $data['pengeluaran'] = $model->getAllExpenses();
+        echo view('master/header', $data);
+        echo view('master/navbar', $data);
+        echo view('master/sidebar', $data);
+        echo view('v_pengeluaran', $data);
+        echo view('master/footer', $data);
+    }
+
+    public function pengeluaransave()
+    {
+        $model = new Expense_model();
+        $session = \Config\Services::session();
+
+        // Ambil data dari input dan gunakan htmlspecialchars untuk keamanan
+        $id = htmlspecialchars($this->request->getPost('id'));
+        $date = htmlspecialchars($this->request->getPost('date'));
+        $desc = htmlspecialchars($this->request->getPost('desc'));
+        $otherDesc = htmlspecialchars($this->request->getPost('other_desc'));
+        $nominal = htmlspecialchars($this->request->getPost('nominal'));
+
+        // Jika deskripsi "Lainnya" dipilih, gunakan input teks
+        if ($desc === 'Lainnya') {
+            $desc = $otherDesc;
+        }
+
+        // Siapkan data untuk disimpan
+        $data = [
+            'date' => $date,
+            'desc' => $desc,
+            'nominal' => str_replace('.', '', $nominal), // Menghapus titik untuk menyimpan sebagai angka
+        ];
+
+        // Jika ID kosong, berarti menambah data baru
+        if (empty($id)) {
+            $model->insert($data);
+            $session->setFlashdata('sukses', 'Data berhasil ditambahkan!');
+        } else {
+            // Jika ID ada, berarti memperbarui data yang sudah ada
+            $model->update($id, $data);
+            $session->setFlashdata('sukses', 'Data berhasil diperbarui!');
+        }
+
+        return redirect()->to('pengeluaran'); // Ganti dengan URL yang sesuai
+    }
+
+
+    public function pengeluaranaddindex()
+    {
+        $model = new Expense_model();
+        $uniqueDescriptions = $model->getUniqueDescriptions();
+
+        $data['title'] = 'Tambah Pengeluaran';
+        $data['page'] = 'pengeluaran';
+        $data['pengeluaran'] = '';
+        $data['uniqueDescriptions'] = $uniqueDescriptions;
+
+        echo view('master/header', $data);
+        echo view('master/navbar', $data);
+        echo view('master/sidebar', $data);
+        echo view('form/v_form_pengeluaran', $data);
+        echo view('master/footer', $data);
+    }
+
+    public function pengeluaraneditindex($id)
+    {
+        $model = new Expense_model();
+        $session = \Config\Services::session();
+
+        // Cek apakah pengeluaran ada berdasarkan ID
+        $pengeluaran = $model->find($id);
+
+        if (!$pengeluaran) {
+            $session->setFlashdata('error', 'Data pengeluaran tidak ditemukan.');
+            return redirect()->to('pengeluaran'); // Arahkan kembali jika tidak ditemukan
+        }
+
+        // Ambil deskripsi unik untuk dropdown
+        $uniqueDescriptions = $model->getUniqueDescriptions();
+
+        // Siapkan data untuk dikirim ke view
+        $data = [
+            'title' => 'Edit Pengeluaran',
+            'page' => 'pengeluaran',
+            'pengeluaran' => $pengeluaran,
+            'uniqueDescriptions' => $uniqueDescriptions,
+        ];
+
+        echo view('master/header', $data);
+        echo view('master/navbar', $data);
+        echo view('master/sidebar', $data);
+        echo view('form/v_form_pengeluaran', $data);
+        echo view('master/footer', $data);
+    }
+
+
+    public function pengeluarandelete($id)
+    {
+        $session = \Config\Services::session();
+        $model = new Expense_model();
+
+        $pengeluaran = $model->find($id);
+
+        if ($pengeluaran) {
+            $model->delete($id);
+            $session->setFlashdata('sukses', 'Berhasil menghapus data pengeluaran!');
+        } else {
+            $session->setFlashdata('error', 'Gagal menghapus data pengeluaran! Data tidak ditemukan.');
+        }
+
+        return redirect()->back();
+    }
+
     //Produk
     public function produkindex()
     {

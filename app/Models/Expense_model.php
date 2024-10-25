@@ -13,37 +13,23 @@ class Expense_model extends Model
         'desc',
         'nominal',
     ]; // Kolom yang bisa diisi
-    protected $useTimestamps = false; // Jika Anda tidak menggunakan timestamp
 
     // Mendapatkan semua data
     public function getAllExpenses()
     {
-        return $this->findAll();
+        return $this->orderBy('date', 'DESC')->findAll();
     }
 
-    // Mendapatkan data berdasarkan ID
-    public function getExpenseById($id)
+    // Mengambil deskripsi unik
+    public function getUniqueDescriptions()
     {
-        return $this->find($id);
+        $results = $this->select('desc')
+                        ->distinct()
+                        ->findAll();
+
+        return array_column($results, 'desc'); // Mengambil hanya kolom 'desc' dari hasil
     }
 
-    // Menambah data baru
-    public function addExpense($data)
-    {
-        return $this->insert($data);
-    }
-
-    // Mengedit data
-    public function updateExpense($id, $data)
-    {
-        return $this->update($id, $data);
-    }
-
-    // Menghapus data
-    public function deleteExpense($id)
-    {
-        return $this->delete($id);
-    }
 
     // Mendapatkan data berdasarkan tanggal terbaru
     public function getLatestExpense()
