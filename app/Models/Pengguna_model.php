@@ -27,6 +27,12 @@ class Pengguna_model extends Model
         return $this->where('id', $id)->first();
     }
 
+    public function getPenggunaByUsername($username)
+    {
+        return $this->where('username', $username)->get();
+    }
+
+
     public function editPengguna($data, $id)
     {
         $builder = $this->db->table($this->table);

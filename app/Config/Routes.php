@@ -14,8 +14,11 @@ $routes->add('/login/in', 'Auth::in');
 //Logout
 $routes->add('/logout', 'Auth::out', ['filter' => 'login']);
 
-// Profil
+// Produk
 $routes->get('/produk', 'Admin::produkindex', ['filter' => 'login']);
+$routes->get('/produk/edit', 'Admin::produkedit', ['filter' => 'login']);
+$routes->add('/produk/edit/save', 'Admin::produkeditsave', ['filter' => 'login']);
+
 
 // Profil
 $routes->get('/profil', 'Admin::profilindex', ['filter' => 'login']);

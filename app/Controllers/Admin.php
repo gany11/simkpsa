@@ -40,6 +40,59 @@ class Admin extends BaseController
         echo view('master/footer', $data);
     }
 
+    public function produkedit()
+    {
+        $data['title']     = 'Edit Produk';
+        $data['page']     = 'produk';
+        $model = new Produk_model();
+        $data['produk'] = $model->getLastProduct();
+        echo view('master/header', $data);
+        echo view('master/navbar', $data);
+        echo view('master/sidebar', $data);
+        echo view('form/v_form_edit_produk', $data);
+        echo view('master/footer', $data);
+    }
+
+    public function produkeditsave()
+    { 
+        $session = \Config\Services::session();
+        $model = new Produk_model();
+    
+        // Ambil ID produk dari parameter post
+        $id = $this->request->getPost('id');
+    
+        // Cek apakah produk ada di database
+        $produk = $model->getProductById($id);
+        if (!$produk) {
+            $session->setFlashdata('error', 'ID produk tidak terdaftar. Silakan coba dengan ID yang valid!');
+            return redirect()->to('produk');
+        }
+    
+        $hargaBeli = str_replace('.', '', $this->request->getPost('hargabeli'));
+        $hargaJual = str_replace('.', '', $this->request->getPost('hargajual'));
+    
+        // Validasi input
+        $this->validate([
+            'hargabeli' => 'required|numeric',
+            'hargajual' => 'required|numeric',
+        ]);
+    
+        // Data yang akan diupdate
+        $data = [
+            'harga_beli' => $hargaBeli,
+            'harga_jual' => $hargaJual,
+        ];
+    
+        // Melakukan update
+        if ($model->updateProduct($id, $data)) {
+            $session->setFlashdata('sukses', 'Berhasil mengupdate produk!');
+            return redirect()->to('produk'); // Ganti dengan route yang sesuai
+        } else {
+            $session->setFlashdata('error', 'Gagal mengupdate produk. Silakan coba lagi!');
+            return redirect()->back()->withInput();
+        }
+    }
+
     //Profil
     public function profilindex()
     {
@@ -91,7 +144,7 @@ class Admin extends BaseController
                 return redirect()->to('profil');
             } else {
                 $session->setFlashdata('error', 'Username sudah tersedia, silahkan ganti username Anda!');
-                return redirect()->to('profil');
+                return redirect()->back()->withInput();
             }
         } else {
             $model->editPengguna($data, $id);
@@ -123,39 +176,47 @@ class Admin extends BaseController
 
         // Ambil ID dari session
         $id = $session->get('id');
-        $passlama = base64_encode(htmlspecialchars($this->request->getPost('passwordlama')));
-        $passbaru = base64_encode(htmlspecialchars($this->request->getPost('passwordbaru')));
-        $konpassbaru = base64_encode(htmlspecialchars($this->request->getPost('konfirmasipasswordbaru')));
+        
+        // Ambil input dari form
+        $passlama = htmlspecialchars($this->request->getPost('passwordlama'));
+        $passbaru = htmlspecialchars($this->request->getPost('passwordbaru'));
+        $konpassbaru = htmlspecialchars($this->request->getPost('konfirmasipasswordbaru'));
 
-        $data = array(
-            'password'  => $passbaru
-        );
-
+        // Pastikan password baru dan konfirmasi password sama
         if ($passbaru === $konpassbaru) {
             $getPengguna = $model->getByid($id);
-            
-            // Pastikan pengguna ditemukan sebelum memeriksa password
+
+            // Pastikan pengguna ditemukan
             if ($getPengguna) {
-                // Periksa apakah password lama yang dimasukkan benar
-                if ($passlama === $getPengguna['password']) {
+                // Verifikasi apakah password lama benar
+                if (password_verify($passlama, $getPengguna['password'])) {
                     // Hash password baru sebelum menyimpannya
+                    $hashedPassword = password_hash($passbaru, PASSWORD_DEFAULT);
+                    
+                    // Update password di database
                     $data = [
-                        'password' => $passbaru
+                        'password' => $hashedPassword
                     ];
                     $model->editPengguna($data, $id);
+                    
+                    // Set pesan sukses dan redirect
                     $session->setFlashdata('sukses', 'Berhasil mengedit password!');
                     return redirect()->to('profil');
                 } else {
-                    $session->setFlashdata('error', 'Password Lama Anda Salah!');
-                    return redirect()->to('profil');
+                    // Password lama salah
+                    $session->setFlashdata('error', 'Password Lama Anda Salah, Silakan coba lagi!!');
+                    return redirect()->back()->withInput();
                 }
             } else {
-                $session->setFlashdata('error', 'Pengguna tidak ditemukan!');
-                return redirect()->to('profil');
+                // Pengguna tidak ditemukan
+                $session->setFlashdata('error', 'Pengguna tidak ditemukan. Silakan coba lagi!');
+                return redirect()->back()->withInput();
             }
         } else {
-            $session->setFlashdata('error', 'Password Baru dan Konfirmasi Password Berbeda!');
-            return redirect()->to('profil');
-        }        
+            // Password baru dan konfirmasi tidak cocok
+            $session->setFlashdata('error', 'Password Baru dan Konfirmasi Password Berbeda. Silakan coba lagi!!');
+            return redirect()->back()->withInput();
+        }
     }
+
 }
