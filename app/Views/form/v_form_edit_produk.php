@@ -29,14 +29,24 @@
                         <div class="form-group row">
                             <label for="inputHargaBeli" class="col-sm-2 col-form-label">Harga Beli Satuan (Rupiah)</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" id="inputHargaBeli" placeholder="Masukkan Harga Beli" name="hargabeli" value="<?= (empty($produk) ? '' : number_format($produk["harga_beli"], 0, ',', '.')) ?>" oninput="formatRupiah(this)" required>
+                                <input type="number" class="form-control" id="inputHargaBeli" 
+                                    placeholder="Masukkan Harga Beli" 
+                                    name="hargabeli" 
+                                    value="<?= (empty($produk) ? '' : $produk["harga_beli"]) ?>" 
+                                    step="0.01" 
+                                    required>
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <label for="inputHargaJual" class="col-sm-2 col-form-label">Harga Jual Satuan (Rupiah)</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" id="inputHargaJual" placeholder="Masukkan Harga Jual" name="hargajual" value="<?= (empty($produk) ? '' : number_format($produk["harga_jual"], 0, ',', '.')) ?>" oninput="formatRupiah(this)" required>
+                                <input type="number" class="form-control" id="inputHargaJual" 
+                                    placeholder="Masukkan Harga Jual" 
+                                    name="hargajual" 
+                                    value="<?= (empty($produk) ? '' : $produk["harga_jual"]) ?>" 
+                                    step="0.01" 
+                                    required>
                             </div>
                         </div>
                     </div>
@@ -51,27 +61,6 @@
             </div>
         </div>
     </section>
-
-    <script>
-        function formatRupiah(input) {
-            // Menghapus karakter non-angka, tetapi membiarkan satu titik dan satu koma
-            let value = input.value.replace(/[^0-9.,]/g, '');
-
-            // Memisahkan bagian integer dan desimal
-            let parts = value.split(',');
-            let integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Format ribuan
-            let decimalPart = parts[1] ? ',' + parts[1].slice(0, 2) : ''; // Maksimal 2 digit desimal
-
-            // Gabungkan kembali bagian integer dan desimal
-            input.value = integerPart + decimalPart;
-        }
-
-        // Validasi karakter yang diizinkan saat mengetik
-        function isNumberKey(evt) {
-            const charCode = (evt.which) ? evt.which : evt.keyCode;
-            return charCode === 8 || charCode === 0 || (charCode >= 48 && charCode <= 57);
-        }
-    </script>
 
 
     <!-- /.content -->

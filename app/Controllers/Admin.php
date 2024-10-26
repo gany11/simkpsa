@@ -13,6 +13,10 @@ class Admin extends BaseController
     {
         $data['title']     = 'Dashboard';
         $data['page']     = 'dashboard';
+        $model = new Expense_model();
+        $data['pengeluaran'] = $model->getAllExpenses();
+        $model = new Income_model();
+        $data['pemasukan'] = $model->getAllIncomes();
         echo view('master/header', $data);
         echo view('master/navbar', $data);
         echo view('master/sidebar', $data);
@@ -20,14 +24,6 @@ class Admin extends BaseController
         echo view('master/footer', $data);
     }
 
-    private function formatToNumber($value)
-    {
-        // Menghapus titik dan mengganti koma dengan titik
-        $value = str_replace('.', '', $value); // Menghapus pemisah ribuan
-        $value = str_replace(',', '.', $value); // Mengganti pemisah desimal dari koma ke titik
-
-        return (float)$value; // Mengembalikan sebagai float
-    }
 
     //Pemasukan
     public function pemasukanindex()
@@ -75,29 +71,39 @@ class Admin extends BaseController
 
     public function pengeluaransave()
     {
-        $model = new Expense_model();
         $session = \Config\Services::session();
-
-        // Ambil data dari input dan gunakan htmlspecialchars untuk keamanan
-        $id = htmlspecialchars($this->request->getPost('id'));
-        $date = htmlspecialchars($this->request->getPost('date'));
-        $desc = htmlspecialchars($this->request->getPost('desc'));
-        $otherDesc = htmlspecialchars($this->request->getPost('other_desc'));
-        $nominal = htmlspecialchars($this->request->getPost('nominal'));
-
+        $model = new Expense_model();
+    
+        // Ambil ID pengeluaran dari parameter post
+        $id = $this->request->getPost('id');
+    
+        // Ambil data dari input
+        $date = $this->request->getPost('date');
+        $desc = $this->request->getPost('desc');
+        $otherDesc = $this->request->getPost('other_desc');
+        $nominal = $this->request->getPost('nominal');
+    
         // Jika deskripsi "Lainnya" dipilih, gunakan input teks
         if ($desc === 'Lainnya') {
             $desc = $otherDesc;
         }
-
+    
+        // Validasi input nominal
+        if (!is_numeric($nominal)) {
+            return redirect()->back()->withInput()->with('error', 'Nominal harus berupa angka.');
+        }
+    
+        // Mengonversi ke float
+        $nominal = (float)$nominal;
+    
         // Siapkan data untuk disimpan
         $data = [
             'date' => $date,
             'desc' => $desc,
-            'nominal' => str_replace('.', '', $nominal), // Menghapus titik untuk menyimpan sebagai angka
+            'nominal' => $nominal,
         ];
-
-        // Jika ID kosong, berarti menambah data baru
+    
+        // Jika ID tidak ada, berarti menambah data baru
         if (empty($id)) {
             $model->insert($data);
             $session->setFlashdata('sukses', 'Data berhasil ditambahkan!');
@@ -106,10 +112,10 @@ class Admin extends BaseController
             $model->update($id, $data);
             $session->setFlashdata('sukses', 'Data berhasil diperbarui!');
         }
-
-        return redirect()->to('pengeluaran'); // Ganti dengan URL yang sesuai
+    
+        return redirect()->to('pengeluaran'); // Ganti dengan route yang sesuai
     }
-
+    
     public function pengeluaranaddindex()
     {
         $model = new Expense_model();
@@ -189,6 +195,8 @@ class Admin extends BaseController
             $data['lastProduct']['harga_jual'] = $formatter->formatRupiah($data['lastProduct']['harga_jual']);
             $data['lastProduct']['harga_beli'] = $formatter->formatRupiah($data['lastProduct']['harga_beli']);
         }
+        $model = new Income_model();
+        $data['terakhir'] = $model->getLatestIncome();
         echo view('master/header', $data);
         echo view('master/navbar', $data);
         echo view('master/sidebar', $data);
@@ -224,13 +232,18 @@ class Admin extends BaseController
             return redirect()->to('produk');
         }
     
-        $hargaBeli = $this->formatToNumber($this->request->getPost('hargabeli'));
-        $hargaJual = $this->formatToNumber($this->request->getPost('hargajual'));
+        $hargaBeli = $this->request->getPost('hargabeli');
+        $hargaJual = $this->request->getPost('hargajual');
         // Validasi input
-        $this->validate([
-            'hargabeli' => 'required|numeric',
-            'hargajual' => 'required|numeric',
-        ]);
+        if (!is_numeric($hargaBeli) || !is_numeric($hargaJual)) {
+            // Jika tidak valid, beri respon atau redirect
+            return redirect()->back()->withInput()->with('error', 'Harga harus berupa angka.');
+
+        }
+
+        // Mengonversi ke float
+        $hargaBeli = (float)$hargaBeli;
+        $hargaJual = (float)$hargaJual;
     
         // Data yang akan diupdate
         $data = [

@@ -25,19 +25,20 @@
             <img 
                 src="<?php echo base_url('assets/images/produk.png');?>" 
                 alt="PT Perta Sakti Abadi" 
-                style="width: 20%; height: auto;">
+                style="width: 250px; height: auto;">
           </div>
 
 
           <ul class="list-group list-group-unbordered m-3 mt-5 mb-3">
             <li class="list-group-item d-flex justify-content-between">
-                <b>Harga Jual Satuan</b> <span><?= $lastProduct['harga_jual']; ?></span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between">
                 <b>Harga Beli Satuan</b> <span><?= $lastProduct['harga_beli']; ?></span>
             </li>
             <li class="list-group-item d-flex justify-content-between">
-                <b>Stok Terbaru (Update: 20 Oktober 2024)</b> <span>xxx Liter</span>
+                <b>Harga Jual Satuan</b> <span><?= $lastProduct['harga_jual']; ?></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+                <b>Stok Terbaru<br>(<?= isset($terakhir) ? $this->DateConverter->formatTanggalBulanText($terakhir['tanggal']) : 'Tidak ada update' ?>)</b>
+                <span><?= isset($terakhir) ? $this->FormatNumber->format($terakhir['dipping4']) . ' Liter' : 'Data tidak tersedia' ?></span>
             </li>
           </ul>
 

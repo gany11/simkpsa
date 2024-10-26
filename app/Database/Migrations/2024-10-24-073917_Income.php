@@ -51,12 +51,12 @@ class Income extends Migration
             'dipping2'            => [
                 'type'           => 'DECIMAL',
                 'constraint'     => '15,2',
-                'null'           => true,
+                'null'           => false,
             ],
             'dipping3'            => [
                 'type'           => 'DECIMAL',
                 'constraint'     => '15,2',
-                'null'           => true,
+                'null'           => false,
             ],
             'dipping4'            => [
                 'type'           => 'DECIMAL',
@@ -92,6 +92,12 @@ class Income extends Migration
                 'type'           => 'ENUM',
                 'constraint'     => ['Pagi', 'Siang', 'Malam'],
                 'null'           => true,
+            ],
+            // Adding the new column for stok terpakai
+            'stok_terpakai'       => [
+                'type'           => 'DECIMAL',
+                'constraint'     => '15,2',
+                'null'           => false,
             ],
         ]);
 

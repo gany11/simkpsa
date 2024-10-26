@@ -20,147 +20,212 @@
 
     <!-- Main content -->
     <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <form action="<?= base_url('pemasukan/save'); ?>" method="post">
-                                <table class="table">
-                                <tbody>
-    <tr>
-        <td>Tanggal</td>
-        <td>
-            <div class="input-group">
-                <input type="hidden" class="form-control" name="id" <?= (empty($pemasukan) ? '' : 'value="'.$pemasukan['id'].'"') ?>>
-                <input type="date" class="form-control" name="tanggal" <?= (empty($pemasukan) ? '' : 'value="'.$pemasukan['tanggal'].'"') ?> required>
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td>Totalisator Awal</td>
-        <td>
-            <div class="input-group">
-                <input type="text" class="form-control" name="totalisator_awal" placeholder="Masukkan Totalisator Awal" 
-                <?= (empty($pemasukan) ? (isset($terakhir) ? 'value="'.esc($terakhir['totalisator_akhir']).'"' : '') : 'value="'.esc($pemasukan['totalisator_awal']).'"') ?> oninput="formatRupiah(this)" required>
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td>Totalisator Akhir</td>
-        <td>
-            <div class="input-group">
-                <input type="text" class="form-control" name="totalisator_akhir" placeholder="Masukkan Totalisator Akhir" <?= (empty($pemasukan) ? '' : 'value="'.esc($pemasukan['totalisator_akhir']).'"') ?> oninput="formatRupiah(this)" required>
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td>Harga Satuan</td>
-        <td>
-            <div class="input-group">
-                <input type="text" class="form-control" name="price_unit" placeholder="Masukkan Harga Satuan" <?= (empty($pemasukan) ? 'value="'.esc($produk['harga_jual']).'"' : 'value="'.esc($pemasukan['price_unit']).'"') ?> oninput="formatRupiah(this)" required>
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td>Pengiriman</td>
-        <td>
-            <div class="input-group">
-                <label><input type="radio" name="pengiriman" value="yes" onchange="togglePengirimanOptions(this)"> Ya</label>
-                <label><input type="radio" name="pengiriman" value="no" onchange="togglePengirimanOptions(this)"> Tidak</label>
-                <div id="pengirimanOptions" style="display: none;">
-                    <div>
-                        <label><input type="radio" name="waktu_pengiriman" value="Pagi" onchange="toggleDippingInputs(this)"> Pagi</label>
-                    </div>
-                    <div>
-                        <label><input type="radio" name="waktu_pengiriman" value="Siang" onchange="toggleDippingInputs(this)"> Siang</label>
-                    </div>
-                    <div>
-                        <label><input type="radio" name="waktu_pengiriman" value="Malam" onchange="toggleDippingInputs(this)"> Malam</label>
-                    </div>
-                    <div id="dippingInputs" style="display: none;"></div>
-                </div>
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td>Pumptes</td>
-        <td>
-            <div class="input-group">
-                <label><input type="radio" name="pumptes" value="yes" onchange="togglePumptesInput(this)"> Ya</label>
-                <label><input type="radio" name="pumptes" value="no" onchange="togglePumptesInput(this)"> Tidak</label>
-                <input type="text" class="form-control" id="besartesInput" name="besartes" placeholder="Masukkan Besar Tes" style="display: none;" oninput="formatRupiah(this)">
-            </div>
-        </td>
-    </tr>
-</tbody>
+        <div class="card card-primary card-outline">
+            <div class="card-body">
+                <form class="form-horizontal" action="<?= base_url('pemasukan/save'); ?>" method="post" onsubmit="return validateForm()">
+                    <div class="card-body">
+                        <input type="hidden" name="id" value="<?= (empty($pemasukan) ? '' : $pemasukan['id']); ?>">
 
-<script>
-function formatRupiah(input) {
-    // Menghapus karakter non-angka
-    let value = input.value.replace(/[^0-9]/g, '');
-    // Format ke dalam format ribuan
-    if (value.length > 0) {
-        value = Number(value).toLocaleString('id-ID');
-    }
-    // Update nilai input
-    input.value = value;
-}
-
-function togglePengirimanOptions(radio) {
-    const pengirimanOptions = document.getElementById('pengirimanOptions');
-    pengirimanOptions.style.display = radio.value === 'yes' ? 'block' : 'none';
-}
-
-function toggleDippingInputs(radio) {
-    const dippingInputsContainer = document.getElementById('dippingInputs');
-    dippingInputsContainer.innerHTML = ''; // Reset input container
-
-    if (radio.value === 'Pagi') {
-        dippingInputsContainer.innerHTML = `
-            <input type="text" class="form-control" name="dipping1" placeholder="Dipping (Sebelum Pengiriman)" oninput="formatRupiah(this)">
-            <input type="text" class="form-control" name="dipping2" placeholder="Dipping (Setelah Pengiriman)" oninput="formatRupiah(this)">
-            <input type="text" class="form-control" name="dipping3" placeholder="Dipping (Saat Tutup)" oninput="formatRupiah(this)">
-        `;
-    } else if (radio.value === 'Siang') {
-        dippingInputsContainer.innerHTML = `
-            <input type="text" class="form-control" name="dipping1" placeholder="Dipping (Saat Buka)" oninput="formatRupiah(this)">
-            <input type="text" class="form-control" name="dipping2" placeholder="Dipping (Sebelum Pengiriman)" oninput="formatRupiah(this)">
-            <input type="text" class="form-control" name="dipping3" placeholder="Dipping (Setelah Pengiriman)" oninput="formatRupiah(this)">
-            <input type="text" class="form-control" name="dipping4" placeholder="Dipping (Saat Tutup)" oninput="formatRupiah(this)">
-        `;
-    } else if (radio.value === 'Malam') {
-        dippingInputsContainer.innerHTML = `
-            <input type="text" class="form-control" name="dipping1" placeholder="Dipping (Saat Buka)" oninput="formatRupiah(this)">
-            <input type="text" class="form-control" name="dipping2" placeholder="Dipping (Saat Tutup)" oninput="formatRupiah(this)">
-            <input type="text" class="form-control" name="dipping3" placeholder="Dipping (Sebelum Pengiriman)" oninput="formatRupiah(this)">
-            <input type="text" class="form-control" name="dipping4" placeholder="Dipping (Setelah Pengiriman)" oninput="formatRupiah(this)">
-        `;
-    }
-    dippingInputsContainer.style.display = dippingInputsContainer.innerHTML ? 'block' : 'none';
-}
-
-function togglePumptesInput(radio) {
-    const besartesInput = document.getElementById('besartesInput');
-    besartesInput.style.display = radio.value === 'yes' ? 'block' : 'none';
-}
-</script>
-
-                                </table>
-
-                                <div class="row">
-                                    <div class="col-12">
-                                        <button type="submit" class="btn btn-primary btn-block">Simpan</button>
-                                    </div>
-                                    <!-- /.col -->
-                                </div>
-                            </form>
+                        <div class="form-group row">
+                            <label for="inputTanggal" class="col-sm-4 col-form-label">Tanggal</label>
+                            <div class="col-sm-8">
+                                <input type="date" class="form-control" id="inputTanggal" 
+                                    name="tanggal" 
+                                    value="<?= (empty($pemasukan) ? '' : $pemasukan['tanggal']); ?>" 
+                                    required>
+                            </div>
                         </div>
+
+                        <div class="form-group row">
+                            <label for="inputTotalisatorAwal" class="col-sm-4 col-form-label">Totalisator Awal</label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="inputTotalisatorAwal" 
+                                    name="totalisator_awal" 
+                                    placeholder="Masukkan Totalisator Awal" 
+                                    value="<?= (empty($pemasukan) ? (isset($terakhir) ? esc($terakhir['totalisator_akhir']) : '') : esc($pemasukan['totalisator_awal'])); ?>" 
+                                    step="0.01" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="inputTotalisatorAkhir" class="col-sm-4 col-form-label">Totalisator Akhir</label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="inputTotalisatorAkhir" 
+                                    name="totalisator_akhir" 
+                                    placeholder="Masukkan Totalisator Akhir" 
+                                    value="<?= (empty($pemasukan) ? '' : esc($pemasukan['totalisator_akhir'])); ?>" 
+                                    step="0.01" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="inputPriceUnit" class="col-sm-4 col-form-label">Harga Satuan</label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="inputPriceUnit" 
+                                    name="price_unit" 
+                                    placeholder="Masukkan Harga Satuan" 
+                                    value="<?= (empty($pemasukan) ? esc($produk['harga_jual']) : esc($pemasukan['price_unit'])); ?>" 
+                                    step="0.01" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="inputPengiriman" class="col-sm-4 col-form-label">Pengiriman</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="inputPengiriman" name="pengiriman" onchange="togglePengirimanOptions(this)">
+                                    <option value="yes">Ya</option>
+                                    <option value="no" selected>Tidak</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="pengirimanOptions" style="display: none;">
+                            <div class="form-group row">
+                                <label for="inputWaktuPengiriman" class="col-sm-4 col-form-label">Waktu Pengiriman</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" id="inputWaktuPengiriman" name="waktu_pengiriman">
+                                        <option value="Pagi">Pagi</option>
+                                        <option value="Siang" selected>Siang</option>
+                                        <option value="Malam">Malam</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="inputDipping1" class="col-sm-4 col-form-label">Dipping 1</label>
+                                <div class="col-sm-8">
+                                    <input type="number" class="form-control" id="inputDipping1" 
+                                        name="dipping1" 
+                                        placeholder="Hasil Diping Terakhir" step="0.01" >
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="inputDipping2" class="col-sm-4 col-form-label">Dipping 2</label>
+                                <div class="col-sm-8">
+                                    <input type="number" class="form-control" id="inputDipping2" 
+                                        name="dipping2" 
+                                        placeholder="Sebelum Pembongkaran Kiriman" step="0.01">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="inputDipping3" class="col-sm-4 col-form-label">Dipping 3</label>
+                                <div class="col-sm-8">
+                                    <input type="number" class="form-control" id="inputDipping3" 
+                                        name="dipping3" 
+                                        placeholder="Setelah Pembongkaran Kiriman" step="0.01">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="inputDipping4" class="col-sm-4 col-form-label">Dipping 4</label>
+                                <div class="col-sm-8">
+                                    <input type="number" class="form-control" id="inputDipping4" 
+                                        name="dipping4" 
+                                        placeholder="Saat Penutupan" step="0.01">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="dippingOptions" style="display: block;">
+                            <div class="form-group row">
+                                <label for="inputDipping1" class="col-sm-4 col-form-label">Dipping 1</label>
+                                <div class="col-sm-8">
+                                    <input type="number" class="form-control" id="inputDipping1" 
+                                        name="dipping1" 
+                                        placeholder="Hasil Diping Terakhir" step="0.01" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="inputDipping4" class="col-sm-4 col-form-label">Dipping 4</label>
+                                <div class="col-sm-8">
+                                    <input type="number" class="form-control" id="inputDipping4" 
+                                        name="dipping4" 
+                                        placeholder="Saat Penutupan" step="0.01" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="inputPumptes" class="col-sm-4 col-form-label">Pumptes</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="inputPumptes" name="pumptes" onchange="togglePumptesInput(this)">
+                                    <option value="no" selected>Tidak</option>
+                                    <option value="yes">Ya</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="besartesInputContainer" style="display: none;">
+                            <div class="form-group row">
+                                <label for="besartesInput" class="col-sm-4 col-form-label">Besar Tes</label>
+                                <div class="col-sm-8">
+                                    <input type="number" class="form-control" id="besartesInput" 
+                                        name="besartes" 
+                                        placeholder="Masukkan Besar Tes" step="0.01">
+                                </div>
+                            </div>
+                        </div>
+
+                        <script>
+                            function togglePengirimanOptions(select) {
+                                const pengirimanOptions = document.getElementById('pengirimanOptions');
+                                const dippingOptions = document.getElementById('dippingOptions');
+                                if (select.value === 'yes') {
+                                    pengirimanOptions.style.display = 'block';
+                                    dippingOptions.style.display = 'none';
+                                } else {
+                                    pengirimanOptions.style.display = 'none';
+                                    dippingOptions.style.display = 'block';
+                                }
+                            }
+
+                            function togglePumptesInput(select) {
+                                const besartesInputContainer = document.getElementById('besartesInputContainer');
+                                besartesInputContainer.style.display = select.value === 'yes' ? 'block' : 'none';
+                            }
+
+                            function validateForm() {
+                                const pengirimanSelect = document.getElementById('inputPengiriman');
+                                const pumptesSelect = document.getElementById('inputPumptes');
+                                const dipping1 = document.getElementById('inputDipping1');
+                                const dipping2 = document.getElementById('inputDipping2');
+                                const dipping3 = document.getElementById('inputDipping3');
+                                const dipping4 = document.getElementById('inputDipping4');
+                                const besartesInput = document.getElementById('besartesInput');
+
+                                let valid = true;
+
+                                if (pengirimanSelect.value === 'yes') {
+                                    if (!dipping1.value || !dipping2.value || !dipping3.value || !dipping4.value) {
+                                        sweetAlert('Oops!', 'Lengkapi Hasil Dipping!', 'error');
+                                        valid = false;
+                                    }
+                                }
+
+                                if (pumptesSelect.value === 'yes' && !besartesInput.value) {
+                                    sweetAlert('Oops!', 'Lengkapi Besar Tes!', 'error');
+                                    valid = false;
+                                }
+
+                                return valid;
+                            }
+                        </script>
                     </div>
-                </div>
+                    <!-- /.card-body -->
+
+                    <div class="d-flex">
+                        <button type="button" class="btn btn-default flex-fill m-3" onclick="window.history.back();">Batal</button>
+                        <button type="submit" class="btn btn-primary flex-fill m-3">Simpan</button>
+                    </div>
+                    <!-- /.card-footer -->
+                </form>
             </div>
         </div>
     </section>
+
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
