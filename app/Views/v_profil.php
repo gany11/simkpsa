@@ -38,7 +38,6 @@
             </li>
           </ul>
 
-
           <div class="d-flex">
             <a href="<?php echo base_url('profil/edit')?>" class="btn btn-primary flex-fill m-3"><b>Edit Profil</b></a>
             <a href="<?php echo base_url('password/edit')?>" class="btn btn-primary flex-fill m-3"><b>Edit Password</b></a>

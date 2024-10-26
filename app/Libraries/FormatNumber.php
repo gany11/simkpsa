@@ -15,14 +15,3 @@ class FormatNumber
         return number_format($number, 2, ',', '.');
     }
 }
-
-    // <?php
-    // // Memuat library FormatNumber
-    // $formatNumber = new \App\Libraries\FormatNumber();
-
-    // // Contoh angka
-    // $number = 100000.00; 
-
-    // // Menampilkan angka yang diformat
-    // echo $formatNumber->format($number);
-    // ?>

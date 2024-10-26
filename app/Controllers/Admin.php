@@ -20,6 +20,45 @@ class Admin extends BaseController
         echo view('master/footer', $data);
     }
 
+    private function formatToNumber($value)
+    {
+        // Menghapus titik dan mengganti koma dengan titik
+        $value = str_replace('.', '', $value); // Menghapus pemisah ribuan
+        $value = str_replace(',', '.', $value); // Mengganti pemisah desimal dari koma ke titik
+
+        return (float)$value; // Mengembalikan sebagai float
+    }
+
+    //Pemasukan
+    public function pemasukanindex()
+    {
+        $data['title']     = 'Pemasukan';
+        $data['page']     = 'pemasukan';
+        $model = new Income_model();
+        $data['pemasukan'] = $model->getAllIncomes();
+        echo view('master/header', $data);
+        echo view('master/navbar', $data);
+        echo view('master/sidebar', $data);
+        echo view('v_pemasukan', $data);
+        echo view('master/footer', $data);
+    }
+
+    public function pemasukanaddindex()
+    {
+        $data['title'] = 'Tambah Pemasukan';
+        $data['page'] = 'pemasukan';
+        $data['pemasukan'] = '';
+        $model = new Income_model();
+        $data['terakhir'] = $model->getLatestIncome();
+        $model = new Produk_model();
+        $data['produk'] = $model->getLastProduct();
+        echo view('master/header', $data);
+        echo view('master/navbar', $data);
+        echo view('master/sidebar', $data);
+        echo view('form/v_form_pemasukan', $data);
+        echo view('master/footer', $data);
+    }
+
     //Pengeluaran
     public function pengeluaranindex()
     {
@@ -70,7 +109,6 @@ class Admin extends BaseController
 
         return redirect()->to('pengeluaran'); // Ganti dengan URL yang sesuai
     }
-
 
     public function pengeluaranaddindex()
     {
@@ -186,9 +224,8 @@ class Admin extends BaseController
             return redirect()->to('produk');
         }
     
-        $hargaBeli = str_replace('.', '', $this->request->getPost('hargabeli'));
-        $hargaJual = str_replace('.', '', $this->request->getPost('hargajual'));
-    
+        $hargaBeli = $this->formatToNumber($this->request->getPost('hargabeli'));
+        $hargaJual = $this->formatToNumber($this->request->getPost('hargajual'));
         // Validasi input
         $this->validate([
             'hargabeli' => 'required|numeric',

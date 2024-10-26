@@ -20,42 +20,30 @@
 
     <!-- Main content -->
     <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <form action="<?= base_url('profil/edit/save'); ?>" method="post">
-                                <table class="table">
-                                    <tbody>
-                                        <tr>
-                                            <td>Nama</td>
-                                            <td>
-                                                <div class="input-group">
-                                                    <input type="text" class="form-control" placeholder="Masukkan nama Anda" name="nama" <?= (session()->get('nama') ? 'value="' . esc(session()->get('nama')) . '"' : '') ?> required>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Username</td>
-                                            <td>
-                                                <div class="input-group">
-                                                    <input type="text" class="form-control" placeholder="Masukkan username Anda" name="username" <?= (session()->get('username') ? 'value="' . esc(session()->get('username')) . '"' : '') ?> required>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <div class="row">
-                                    <div class="col-12">
-                                        <button type="submit" class="btn btn-primary btn-block">Simpan</button>
-                                    </div>
-                                <!-- /.col -->
-                                </div>
-                            </form>
+        <div class="card card-primary card-outline">
+            <div class="card-body">
+                <form class="form-horizontal" action="<?= base_url('profil/edit/save'); ?>" method="post">
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <label for="inputNama" class="col-sm-4 col-form-label">Nama</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="inputNama" placeholder="Masukkan nama Anda" name="nama" <?= (session()->get('nama') ? 'value="' . esc(session()->get('nama')) . '"' : '') ?> required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputUsername" class="col-sm-4 col-form-label">Username</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="inputUsername" placeholder="Masukkan username Anda" name="username" <?= (session()->get('username') ? 'value="' . esc(session()->get('username')) . '"' : '') ?> required>
+                            </div>
                         </div>
                     </div>
-                </div>
+                    <!-- /.card-body -->
+                    <div class="d-flex">
+                        <button type="button" class="btn btn-default flex-fill m-3" onclick="window.history.back();">Batal</button>
+                        <button type="submit" class="btn btn-primary flex-fill m-3">Simpan</button>
+                    </div>
+                    <!-- /.card-footer -->
+                </form>
             </div>
         </div>
     </section>

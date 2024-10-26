@@ -29,7 +29,7 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Tanggal</th>
+                                    <th>Hari</th>
                                     <th>Deskripsi</th>
                                     <th>Nominal</th>
                                     <th>Aksi</th>
@@ -38,11 +38,12 @@
                             <tbody>
                                 <?php 
                                 $formatRupiah = new \App\Libraries\CurrencyFormatter();
+                                $formatTanggal = new \App\Libraries\DateConverter();
                                 $no = 1;
                                 foreach ($pengeluaran as $item) { ?>
                                     <tr>
                                         <td><?= $no; ?></td>
-                                        <td><?= esc($item['date']); ?></td> <!-- Menampilkan tanggal -->
+                                        <td><?= esc($formatTanggal->formatTanggalBulanText($item['date'])); ?></td> <!-- Menampilkan tanggal -->
                                         <td><?= esc($item['desc']); ?></td>
                                         <td><?= esc($formatRupiah->formatRupiah($item['nominal'])); ?></td>
                                         <td>
@@ -56,7 +57,7 @@
                             <tfoot>
                                 <tr>
                                     <th>No</th>
-                                    <th>Tanggal</th>
+                                    <th>Hari</th>
                                     <th>Deskripsi</th>
                                     <th>Nominal</th>
                                     <th>Aksi</th>

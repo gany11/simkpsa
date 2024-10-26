@@ -11,7 +11,7 @@
             <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="<?= base_url('/'); ?>">Home</a></li>
                 <li class="breadcrumb-item"><a href="<?php echo base_url('pengeluaran')?>">Pengeluaran</a></li>
-                <li class="breadcrumb-item active"><?=$title?>k</li>
+                <li class="breadcrumb-item active"><?=$title?></li>
             </ol>
           </div>
         </div>
