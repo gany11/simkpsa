@@ -27,8 +27,10 @@
                 alt="PT Perta Sakti Abadi" 
                 style="width: 250px; height: auto;">
           </div>
-
-
+          <?php 
+            $formatTanggal = new \App\Libraries\DateConverter();
+            $formatribuan = new \App\Libraries\FormatNumber();
+          ?>
           <ul class="list-group list-group-unbordered m-3 mt-5 mb-3">
             <li class="list-group-item d-flex justify-content-between">
                 <b>Harga Beli Satuan</b> <span><?= $lastProduct['harga_beli']; ?></span>
@@ -37,13 +39,10 @@
                 <b>Harga Jual Satuan</b> <span><?= $lastProduct['harga_jual']; ?></span>
             </li>
             <li class="list-group-item d-flex justify-content-between">
-                <b>Stok Terbaru<br>(<?= isset($terakhir) ? $this->DateConverter->formatTanggalBulanText($terakhir['tanggal']) : 'Tidak ada update' ?>)</b>
-                <span><?= isset($terakhir) ? $this->FormatNumber->format($terakhir['dipping4']) . ' Liter' : 'Data tidak tersedia' ?></span>
+                <b>Stok Terbaru<br>(<?= isset($terakhir) ? $formatTanggal->formatTanggalBulanText($terakhir['tanggal']) : 'Tidak ada update' ?>)</b>
+                <span><?= isset($terakhir) ? $formatribuan->format($terakhir['dipping4']*20.1459) . ' Liter' : 'Data tidak tersedia' ?></span>
             </li>
           </ul>
-
-
-
 
           <div class="d-flex">
             <a href="<?php echo base_url('produk/edit')?>" class="btn btn-primary flex-fill m-3"><b>Edit Produk</b></a>

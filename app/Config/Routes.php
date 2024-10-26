@@ -19,6 +19,9 @@ $routes->add('/logout', 'Auth::out', ['filter' => 'login']);
 // Pemasukan
 $routes->get('/pemasukan', 'Admin::pemasukanindex', ['filter' => 'login']);
 $routes->get('/pemasukan/tambah', 'Admin::pemasukanaddindex', ['filter' => 'login']);
+$routes->add('/pemasukan/save', 'Admin::pemasukansave', ['filter' => 'login']);
+$routes->add('/pemasukan/edit/(:num)', 'Admin::pemasukaneditindex/$1', ['filter' => 'login']);
+$routes->add('/pemasukan/delete/(:num)', 'Admin::pemasukandelete/$1', ['filter' => 'login']);
 
 // Pengeluaran
 $routes->get('/pengeluaran', 'Admin::pengeluaranindex', ['filter' => 'login']);

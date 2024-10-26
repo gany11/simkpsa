@@ -55,6 +55,144 @@ class Admin extends BaseController
         echo view('master/footer', $data);
     }
 
+    public function pemasukaneditindex($id)
+    {
+        $data['title'] = 'Edit Pemasukan';
+        $data['page'] = 'pemasukan';
+        $model = new Income_model();
+        $data['pemasukan'] = $model->find($id);
+        // Cek jika pemasukan tidak ditemukan
+        if (!$data['pemasukan']) {
+            // Set flashdata untuk pesan error
+            session()->setFlashdata('error', 'Pemasukan tidak ditemukan.');
+            return redirect()->to('pemasukan');
+        } else {
+            echo view('master/header', $data);
+            echo view('master/navbar', $data);
+            echo view('master/sidebar', $data);
+            echo view('form/v_form_pemasukan', $data);
+            echo view('master/footer', $data);
+        }
+    }
+
+    public function pemasukansave()
+    {
+        $session = \Config\Services::session();
+        $model = new Income_model();
+        
+        $x = 20.1459;
+        // Ambil ID pemasukan dari parameter post
+        $id = $this->request->getPost('id');
+        
+        // Ambil data dari input
+        $tanggal = htmlspecialchars($this->request->getPost('tanggal'));
+        $totalisatorAwal = (float) htmlspecialchars($this->request->getPost('totalisator_awal'));
+        $totalisatorAkhir = (float) htmlspecialchars($this->request->getPost('totalisator_akhir'));
+        $priceUnit = (float) htmlspecialchars($this->request->getPost('harga_satuan'));
+        $dipping1 = (float) htmlspecialchars($this->request->getPost('dipping1'));
+        $dipping4 = (float) htmlspecialchars($this->request->getPost('dipping4'));
+        $pengiriman = htmlspecialchars($this->request->getPost('pengiriman'));
+        $pumptes = htmlspecialchars($this->request->getPost('pumtes'));
+
+        // Validasi input nominal
+        if (!is_numeric($totalisatorAwal) || !is_numeric($totalisatorAkhir) || !is_numeric($priceUnit) || !is_numeric($dipping1) || !is_numeric($dipping4)) {
+            return redirect()->back()->withInput()->with('error', 'Masukkan harus berupa angka!');
+        }
+
+        // Validasi tanggal duplikat
+        if ($id) {
+            $existingRecord = $model->findPemasukanByDate($tanggal);
+            if ($existingRecord && $existingRecord['id'] !== $id) {
+                return redirect()->back()->with('error', 'Tanggal sudah ada di data lain');
+            }
+        } else {
+            if ($model->findPemasukanByDate($tanggal)) {
+                return redirect()->back()->with('error', 'Tanggal sudah ada');
+            }
+        }
+
+        $besartes = $pumptes === 'yes' ? (float) htmlspecialchars($this->request->getPost('besartes')) : null;
+        $dipping2 = $pengiriman === 'yes' ? (float) htmlspecialchars($this->request->getPost('dipping2')) : null;
+        $dipping3 = $pengiriman === 'yes' ? (float) htmlspecialchars($this->request->getPost('dipping3')) : null;
+        $waktupengiriman = $pengiriman === 'yes' ? htmlspecialchars($this->request->getPost('waktupengiriman')) : null;
+
+        // Sales Calculation
+        $sales = $totalisatorAkhir - $totalisatorAwal - ($besartes ?? 0);
+        
+        // Total Calculation
+        $total = $sales * $priceUnit;
+
+        // Pengiriman Calculations
+        $besarPengiriman = $pengiriman === 'yes' ? ($dipping3-$dipping2) *$x : null;
+        
+        // Stok Terpakai Calculation
+        if ($pengiriman === 'no') {
+            $stokTerpakai = ($dipping1 - $dipping4)*$x;
+        } else {
+            $stokTerpakai = $waktupengiriman === 'Malam' 
+                ? (($dipping1 - $dipping2 + $dipping3 - $dipping4 - $besarPengiriman)*$x)
+                : (($dipping1 - $dipping2 + $dipping3 - $dipping4)*$x);
+            
+        }
+
+        // Losses Calculation
+        $losses = $sales - $stokTerpakai;
+
+        // Siapkan data untuk disimpan
+        $data = [
+            'tanggal'           => $tanggal,
+            'totalisator_awal'  => $totalisatorAwal,
+            'totalisator_akhir' => $totalisatorAkhir,
+            'sales'             => $sales,
+            'price_unit'        => $priceUnit,
+            'total'             => $total,
+            'dipping1'          => $dipping1,
+            'dipping2'          => $dipping2,
+            'dipping3'          => $dipping3,
+            'dipping4'          => $dipping4,
+            'pengiriman'        => $pengiriman,
+            'pumptes'           => $pumptes,
+            'besartes'          => $besartes,
+            'losses'            => $losses,
+            'besar_pengiriman'  => $besarPengiriman,
+            'waktupengiriman'   => $waktupengiriman,
+            'stok_terpakai'     => $stokTerpakai
+        ];
+
+        // Jika ID tidak ada, berarti menambah data baru
+        if (empty($id)) {
+            $model->insert($data);
+            $session->setFlashdata('sukses', 'Data berhasil ditambahkan!');
+        } else {
+            // Jika ID ada, berarti memperbarui data yang sudah ada
+            $model->update($id, $data);
+            $session->setFlashdata('sukses', 'Data berhasil diperbarui!');
+        }
+
+        return redirect()->to('pemasukan'); // Ganti dengan route yang sesuai
+    }
+
+    public function pemasukandelete($id)
+    {
+        $session = \Config\Services::session();
+        $model = new Income_model(); // Ganti dengan nama model yang sesuai
+
+        // Cek apakah ID valid dan ada di database
+        $income = $model->find($id);
+
+        if ($income) {
+            // ID valid, lakukan penghapusan
+            $model->delete($id);
+            $session->setFlashdata('sukses', 'Data berhasil dihapus!');
+        } else {
+            // ID tidak valid, kembalikan dengan pesan error
+            $session->setFlashdata('error', 'ID tidak valid atau tidak ditemukan.');
+        }
+
+        return redirect()->to('pemasukan'); // Ganti dengan route yang sesuai
+    }
+
+
     //Pengeluaran
     public function pengeluaranindex()
     {
@@ -181,6 +319,19 @@ class Admin extends BaseController
 
         return redirect()->back();
     }
+
+    //Laporan
+    public function laporanindex()
+    {
+        $data['title']     = 'Laporan';
+        $data['page']     = 'laporan';
+        echo view('master/header', $data);
+        echo view('master/navbar', $data);
+        echo view('master/sidebar', $data);
+        echo view('v_laporan', $data);
+        echo view('master/footer', $data);
+    }
+    
 
     //Produk
     public function produkindex()

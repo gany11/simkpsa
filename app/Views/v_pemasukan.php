@@ -47,14 +47,7 @@
                                 $formatribuan = new \App\Libraries\FormatNumber();
                                 $no = 1;
 
-                                foreach ($pemasukan as $item) { 
-                                    // Hitung stok terpakai dan losses
-                                    $stokTerpakai = ($item['dipping2'] - $item['dipping1']) * 2000;
-                                    $losses = $item['sales'] - $stokTerpakai;
-                                    // Tentukan total tes
-                                    $totalTes = (!empty($item['besartes']) && $item['besartes'] > 0) ? esc($item['besartes']) : '-';
-                                    // Tentukan total pengiriman
-                                    $totalPengiriman = (!empty($item['besar_pengiriman']) && $item['besar_pengiriman'] > 0) ? esc($item['besar_pengiriman']) : '-';
+                                foreach ($pemasukan as $item) {
                                 ?>
                                     <tr>
                                         <td><?= $no; ?></td>
@@ -62,14 +55,14 @@
                                         <td><?= esc($formatribuan->format($item['sales'])); ?> Liter</td> <!-- Menampilkan sales -->
                                         <td><?= esc($formatRupiah->formatRupiah($item['price_unit'])); ?></td> <!-- Menampilkan harga satuan -->
                                         <td><?= esc($formatRupiah->formatRupiah($item['total'])); ?></td> <!-- Menampilkan total -->
-                                        <td><?= esc($formatribuan->format($stokTerpakai)); ?> Liter</td> <!-- Menampilkan stok terpakai -->
-                                        <td><?= esc($formatribuan->format($losses)); ?> Liter</td> <!-- Menampilkan losses -->
-                                        <td><?= esc($formatribuan->format($totalTes)); ?> Liter</td> <!-- Menampilkan total tes -->
-                                        <td><?= esc($formatribuan->format($totalPengiriman)); ?> Liter</td> <!-- Menampilkan total pengiriman -->
+                                        <td><?= esc($formatribuan->format($item['stok_terpakai'])); ?> Liter</td> <!-- Menampilkan stok terpakai -->
+                                        <td class="<?= $item['losses'] >= 0 ? 'text-success' : 'text-danger'; ?>"><?= $item['losses'] >= 0 ? '+' : ''; ?><?= esc($formatribuan->format($item['losses'])); ?> Liter</td>
+                                        <td><?= esc($formatribuan->format(empty($item['besartes']) ? '-' : $item['besartes'])); ?> Liter</td> <!-- Menampilkan total tes -->
+                                        <td><?= esc($formatribuan->format(empty($item['besar_pengiriman']) ? '-' : $item['besar_pengiriman'])); ?> Liter</td> <!-- Menampilkan total pengiriman -->
                                         <td>
                                             <?php if ($no == 1) { // Cek apakah ini adalah data terbaru ?>
-                                                <a href="<?= base_url('pemasukan/edit/' . $item['id']) ?>" class="btn btn-success" title="Edit"><i class="fas fa-pen-alt"></i></a>
-                                                <a href="<?= base_url('pemasukan/delete/' . $item['id']) ?>" class="btn btn-danger delete-link" title="Hapus"><i class="fas fa-trash"></i></a>
+                                                <a href="<?= base_url('pemasukan/edit/' . $item['id']) ?>" class="btn btn-success m-1" title="Edit"><i class="fas fa-pen-alt"></i></a>
+                                                <a href="<?= base_url('pemasukan/delete/' . $item['id']) ?>" class="btn btn-danger delete-link m-1" title="Hapus"><i class="fas fa-trash"></i></a>
                                             <?php } ?>
                                         </td>
                                     </tr>

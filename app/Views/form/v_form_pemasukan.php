@@ -22,10 +22,12 @@
     <section class="content">
         <div class="card card-primary card-outline">
             <div class="card-body">
-                <form class="form-horizontal" action="<?= base_url('pemasukan/save'); ?>" method="post" onsubmit="return validateForm()">
+                <form class="form-horizontal" action="<?= base_url('pemasukan/save'); ?>" method="post">
                     <div class="card-body">
+                        <!-- Hidden ID -->
                         <input type="hidden" name="id" value="<?= (empty($pemasukan) ? '' : $pemasukan['id']); ?>">
 
+                        <!-- Tanggal -->
                         <div class="form-group row">
                             <label for="inputTanggal" class="col-sm-4 col-form-label">Tanggal</label>
                             <div class="col-sm-8">
@@ -36,191 +38,143 @@
                             </div>
                         </div>
 
+                        <!-- Totalisator Awal -->
                         <div class="form-group row">
-                            <label for="inputTotalisatorAwal" class="col-sm-4 col-form-label">Totalisator Awal</label>
+                            <label for="totalisatorAwal" class="col-sm-4 col-form-label">Totalisator Awal</label>
                             <div class="col-sm-8">
-                                <input type="number" class="form-control" id="inputTotalisatorAwal" 
+                                <input type="number" class="form-control" id="totalisatorAwal" 
                                     name="totalisator_awal" 
-                                    placeholder="Masukkan Totalisator Awal" 
-                                    value="<?= (empty($pemasukan) ? (isset($terakhir) ? esc($terakhir['totalisator_akhir']) : '') : esc($pemasukan['totalisator_awal'])); ?>" 
-                                    step="0.01" required>
+                                    value="<?= (empty($pemasukan) ? (empty($terakhir) ? '' : $terakhir['totalisator_akhir']) : $pemasukan['totalisator_awal']); ?>" 
+                                    step="0.01" 
+                                    required>
                             </div>
                         </div>
 
+                        <!-- Totalisator Akhir -->
                         <div class="form-group row">
-                            <label for="inputTotalisatorAkhir" class="col-sm-4 col-form-label">Totalisator Akhir</label>
+                            <label for="totalisatorAkhir" class="col-sm-4 col-form-label">Totalisator Akhir</label>
                             <div class="col-sm-8">
-                                <input type="number" class="form-control" id="inputTotalisatorAkhir" 
+                                <input type="number" class="form-control" id="totalisatorAkhir" 
                                     name="totalisator_akhir" 
-                                    placeholder="Masukkan Totalisator Akhir" 
-                                    value="<?= (empty($pemasukan) ? '' : esc($pemasukan['totalisator_akhir'])); ?>" 
+                                    value="<?= (empty($pemasukan) ? '' : $pemasukan['totalisator_akhir']); ?>" 
+                                    step="0.01" 
+                                    required>
+                            </div>
+                        </div>
+
+                        <!-- Harga Satuan -->
+                        <div class="form-group row">
+                            <label for="hargaSatuan" class="col-sm-4 col-form-label">Harga Satuan</label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="hargaSatuan" 
+                                    name="harga_satuan" 
+                                    value="<?= (empty($pemasukan) ? (empty($produk) ? '' : $produk['harga_jual']) : $pemasukan['price_unit']); ?>" 
+                                    step="0.01" 
+                                    required>
+                            </div>
+                        </div>
+
+                        <!-- Dipping 1 dan Dipping 4 -->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Dipping Terakhir (Saat Penutupan Kemarin)</label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control mt-2" name="dipping1" 
+                                    placeholder="Dipping Terakhir (Saat Penutupan Kemarin)" 
+                                    value="<?= (empty($pemasukan) ? (empty($terakhir) ? '' : $terakhir['dipping4']) : $pemasukan['dipping1']); ?>" 
+                                    step="0.01" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Dipping Saat Penutupan</label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control mt-2" name="dipping4" 
+                                    placeholder="Dipping Saat Penutupan" 
+                                    value="<?= (empty($pemasukan) ? '' : $pemasukan['dipping4']); ?>" 
                                     step="0.01" required>
                             </div>
                         </div>
 
+                        <!-- Pengiriman -->
                         <div class="form-group row">
-                            <label for="inputPriceUnit" class="col-sm-4 col-form-label">Harga Satuan</label>
+                            <label for="pengiriman" class="col-sm-4 col-form-label">Pengiriman</label>
                             <div class="col-sm-8">
-                                <input type="number" class="form-control" id="inputPriceUnit" 
-                                    name="price_unit" 
-                                    placeholder="Masukkan Harga Satuan" 
-                                    value="<?= (empty($pemasukan) ? esc($produk['harga_jual']) : esc($pemasukan['price_unit'])); ?>" 
-                                    step="0.01" required>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="inputPengiriman" class="col-sm-4 col-form-label">Pengiriman</label>
-                            <div class="col-sm-8">
-                                <select class="form-control" id="inputPengiriman" name="pengiriman" onchange="togglePengirimanOptions(this)">
-                                    <option value="yes">Ya</option>
-                                    <option value="no" selected>Tidak</option>
+                                <select class="form-control" name="pengiriman" id="pengiriman" onchange="togglePengirimanFields(this)">
+                                    <option value="no" <?= (!empty($pemasukan) && $pemasukan['pengiriman'] === 'no') ? 'selected' : ''; ?>>Tidak</option>
+                                    <option value="yes" <?= (!empty($pemasukan) && $pemasukan['pengiriman'] === 'yes') ? 'selected' : ''; ?>>Ada</option>
                                 </select>
-                            </div>
-                        </div>
 
-                        <div id="pengirimanOptions" style="display: none;">
-                            <div class="form-group row">
-                                <label for="inputWaktuPengiriman" class="col-sm-4 col-form-label">Waktu Pengiriman</label>
-                                <div class="col-sm-8">
-                                    <select class="form-control" id="inputWaktuPengiriman" name="waktu_pengiriman">
-                                        <option value="Pagi">Pagi</option>
-                                        <option value="Siang" selected>Siang</option>
-                                        <option value="Malam">Malam</option>
+                                <!-- Fields for Pengiriman = Yes -->
+                                <div id="pengirimanYesFields" style="display: none;">
+                                    <label class="col-form-label mt-2">Waktu Pengiriman</label>
+                                    <select class="form-control mt-2" name="waktu_pengiriman">
+                                        <option value="Pagi" <?= (!empty($pemasukan) && $pemasukan['waktupengiriman'] === 'Pagi') ? 'selected' : ''; ?>>Pagi</option>
+                                        <option value="Siang" <?= (!empty($pemasukan) && $pemasukan['waktupengiriman'] === 'Siang') ? 'selected' : ''; ?>>Siang</option>
+                                        <option value="Malam" <?= (!empty($pemasukan) && $pemasukan['waktupengiriman'] === 'Malam') ? 'selected' : ''; ?>>Malam</option>
                                     </select>
-                                </div>
-                            </div>
 
-                            <div class="form-group row">
-                                <label for="inputDipping1" class="col-sm-4 col-form-label">Dipping 1</label>
-                                <div class="col-sm-8">
-                                    <input type="number" class="form-control" id="inputDipping1" 
-                                        name="dipping1" 
-                                        placeholder="Hasil Diping Terakhir" step="0.01" >
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label for="inputDipping2" class="col-sm-4 col-form-label">Dipping 2</label>
-                                <div class="col-sm-8">
-                                    <input type="number" class="form-control" id="inputDipping2" 
-                                        name="dipping2" 
-                                        placeholder="Sebelum Pembongkaran Kiriman" step="0.01">
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label for="inputDipping3" class="col-sm-4 col-form-label">Dipping 3</label>
-                                <div class="col-sm-8">
-                                    <input type="number" class="form-control" id="inputDipping3" 
-                                        name="dipping3" 
-                                        placeholder="Setelah Pembongkaran Kiriman" step="0.01">
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label for="inputDipping4" class="col-sm-4 col-form-label">Dipping 4</label>
-                                <div class="col-sm-8">
-                                    <input type="number" class="form-control" id="inputDipping4" 
-                                        name="dipping4" 
-                                        placeholder="Saat Penutupan" step="0.01">
+                                    <label class="col-form-label mt-2">Dipping Sebelum dan Sesudah Bongkar Pengiriman</label>
+                                    <input type="number" class="form-control mt-2 dipping-input" name="dipping2" 
+                                        placeholder="Dipping Sebelum Bongkar Pengiriman" 
+                                        value="<?= (empty($pemasukan) ? '' : $pemasukan['dipping2']); ?>" 
+                                        step="0.01">
+                                    <input type="number" class="form-control mt-2 dipping-input" name="dipping3" 
+                                        placeholder="Dipping Setelah Bongkar Pengiriman" 
+                                        value="<?= (empty($pemasukan) ? '' : $pemasukan['dipping3']); ?>" 
+                                        step="0.01">
                                 </div>
                             </div>
                         </div>
 
-                        <div id="dippingOptions" style="display: block;">
-                            <div class="form-group row">
-                                <label for="inputDipping1" class="col-sm-4 col-form-label">Dipping 1</label>
-                                <div class="col-sm-8">
-                                    <input type="number" class="form-control" id="inputDipping1" 
-                                        name="dipping1" 
-                                        placeholder="Hasil Diping Terakhir" step="0.01" required>
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label for="inputDipping4" class="col-sm-4 col-form-label">Dipping 4</label>
-                                <div class="col-sm-8">
-                                    <input type="number" class="form-control" id="inputDipping4" 
-                                        name="dipping4" 
-                                        placeholder="Saat Penutupan" step="0.01" required>
-                                </div>
-                            </div>
-                        </div>
-
+                        <!-- Pumtes -->
                         <div class="form-group row">
-                            <label for="inputPumptes" class="col-sm-4 col-form-label">Pumptes</label>
+                            <label for="pumtes" class="col-sm-4 col-form-label">Pumtes</label>
                             <div class="col-sm-8">
-                                <select class="form-control" id="inputPumptes" name="pumptes" onchange="togglePumptesInput(this)">
-                                    <option value="no" selected>Tidak</option>
-                                    <option value="yes">Ya</option>
+                                <select class="form-control" name="pumtes" id="pumtes" onchange="togglePumtesFields(this)">
+                                    <option value="no" <?= (!empty($pemasukan) && $pemasukan['pumptes'] === 'no') ? 'selected' : ''; ?>>Tidak</option>
+                                    <option value="yes" <?= (!empty($pemasukan) && $pemasukan['pumptes'] === 'yes') ? 'selected' : ''; ?>>Ada</option>
                                 </select>
-                            </div>
-                        </div>
 
-                        <div id="besartesInputContainer" style="display: none;">
-                            <div class="form-group row">
-                                <label for="besartesInput" class="col-sm-4 col-form-label">Besar Tes</label>
-                                <div class="col-sm-8">
-                                    <input type="number" class="form-control" id="besartesInput" 
-                                        name="besartes" 
-                                        placeholder="Masukkan Besar Tes" step="0.01">
-                                </div>
+                                <label class="col-form-label mt-2" id="besartesLabel" style="display: none;">Besartes</label>
+                                <input type="number" class="form-control mt-2" id="besartesInput" name="besartes" 
+                                    placeholder="Besartes" 
+                                    value="<?= (empty($pemasukan) ? '' : $pemasukan['besartes']); ?>" 
+                                    step="0.01" 
+                                    style="display: none;">
                             </div>
                         </div>
 
                         <script>
-                            function togglePengirimanOptions(select) {
-                                const pengirimanOptions = document.getElementById('pengirimanOptions');
-                                const dippingOptions = document.getElementById('dippingOptions');
+                            function togglePengirimanFields(select) {
+                                const pengirimanYesFields = document.getElementById('pengirimanYesFields');
+                                const dippingYesInputs = document.querySelectorAll('.dipping-input');
+
                                 if (select.value === 'yes') {
-                                    pengirimanOptions.style.display = 'block';
-                                    dippingOptions.style.display = 'none';
+                                    pengirimanYesFields.style.display = 'block';
+                                    dippingYesInputs.forEach(input => input.required = true);
                                 } else {
-                                    pengirimanOptions.style.display = 'none';
-                                    dippingOptions.style.display = 'block';
+                                    pengirimanYesFields.style.display = 'none';
+                                    dippingYesInputs.forEach(input => input.required = false);
                                 }
                             }
 
-                            function togglePumptesInput(select) {
-                                const besartesInputContainer = document.getElementById('besartesInputContainer');
-                                besartesInputContainer.style.display = select.value === 'yes' ? 'block' : 'none';
-                            }
-
-                            function validateForm() {
-                                const pengirimanSelect = document.getElementById('inputPengiriman');
-                                const pumptesSelect = document.getElementById('inputPumptes');
-                                const dipping1 = document.getElementById('inputDipping1');
-                                const dipping2 = document.getElementById('inputDipping2');
-                                const dipping3 = document.getElementById('inputDipping3');
-                                const dipping4 = document.getElementById('inputDipping4');
+                            function togglePumtesFields(select) {
+                                const besartesLabel = document.getElementById('besartesLabel');
                                 const besartesInput = document.getElementById('besartesInput');
-
-                                let valid = true;
-
-                                if (pengirimanSelect.value === 'yes') {
-                                    if (!dipping1.value || !dipping2.value || !dipping3.value || !dipping4.value) {
-                                        sweetAlert('Oops!', 'Lengkapi Hasil Dipping!', 'error');
-                                        valid = false;
-                                    }
-                                }
-
-                                if (pumptesSelect.value === 'yes' && !besartesInput.value) {
-                                    sweetAlert('Oops!', 'Lengkapi Besar Tes!', 'error');
-                                    valid = false;
-                                }
-
-                                return valid;
+                                besartesLabel.style.display = besartesInput.style.display = (select.value === 'yes') ? 'block' : 'none';
+                                besartesInput.required = (select.value === 'yes');
                             }
-                        </script>
-                    </div>
-                    <!-- /.card-body -->
 
-                    <div class="d-flex">
-                        <button type="button" class="btn btn-default flex-fill m-3" onclick="window.history.back();">Batal</button>
-                        <button type="submit" class="btn btn-primary flex-fill m-3">Simpan</button>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                togglePengirimanFields(document.getElementById('pengiriman'));
+                                togglePumtesFields(document.getElementById('pumtes'));
+                            });
+                        </script>
+
+                        <div class="d-flex">
+                            <button type="button" class="btn btn-default flex-fill m-3" onclick="window.history.back();">Batal</button>
+                            <button type="submit" class="btn btn-primary flex-fill m-3">Simpan</button>
+                        </div>
                     </div>
-                    <!-- /.card-footer -->
                 </form>
             </div>
         </div>
