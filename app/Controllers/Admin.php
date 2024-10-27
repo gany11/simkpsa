@@ -351,7 +351,7 @@ class Admin extends BaseController
         }
         $data['jenis']   = (empty($jenis)? '' : ucfirst($jenis));
         $data['tahun']   = (empty($tahun)? '' : $tahun);
-        $data['bulan']   = (empty($bulan)? '' : $bulan);
+        $data['bulan']   = (empty($bulan)? null : $bulan);
         echo view('master/header', $data);
         echo view('master/navbar', $data);
         echo view('master/sidebar', $data);

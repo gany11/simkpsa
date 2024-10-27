@@ -22,62 +22,64 @@
       <div class="card card-primary card-outline">
         <div class="card-body">
           <form class="form-horizontal" action="<?= base_url('laporan'); ?>" method="post">
-            <div class="card-body">
-                <?php if (empty($tanggal)): ?>
-                    <div class="alert alert-warning" role="alert">
-                        Laporan tidak tersedia.
-                    </div>
-                <?php else: ?>
-                    <div class="form-group row">
-                        <label for="inputLaporan" class="col-sm-4 col-form-label">Pilih Jenis Laporan</label>
-                        <div class="col-sm-8">
-                            <select id="inputLaporan" class="form-control" name="jenis_laporan" required>
-                                <option value="tahunan" <?= !empty($jenis) && $jenis == "Tahunan" ? 'selected' : ''; ?>>Laporan Tahunan</option>
-                                <option value="bulanan" <?= !empty($jenis) && $jenis == "Bulanan" ? 'selected' : ''; ?>>Laporan Bulanan</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label for="inputTahun" class="col-sm-4 col-form-label">Tahun</label>
-                        <div class="col-sm-8">
-                            <select id="inputTahun" class="form-control" name="tahun" required>
-                                <?php
-                                // Mendapatkan tahun unik dari tanggal
-                                $tahun_unik = array_map(function($item) {
-                                    return date('Y', strtotime($item['unique_date']));
-                                }, $tanggal);
-                                $tahun_unik = array_unique($tahun_unik);
-                                sort($tahun_unik); // Mengurutkan tahun
-
-                                foreach ($tahun_unik as $tahun): ?>
-                                    <option value="<?= $tahun; ?>"><?= $tahun; ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                          <div class="form-group row" id="bulanDiv" style="display: none;">
-                          <label for="inputBulan" class="col-sm-12 col-form-label">Bulan</label>
-                            <div class="col-sm-12">
-                              <select id="inputBulan" class="form-control" name="bulan">
-                                  <!-- Bulan akan diisi lewat JavaScript -->
+              <div class="card-body">
+                  <?php if (empty($tanggal)): ?>
+                      <div class="alert alert-warning" role="alert">
+                          Laporan tidak tersedia.
+                      </div>
+                  <?php else: ?>
+                      <div class="form-group row">
+                          <label for="inputLaporan" class="col-sm-4 col-form-label">Pilih Jenis Laporan</label>
+                          <div class="col-sm-8">
+                              <select id="inputLaporan" class="form-control" name="jenis_laporan" required>
+                                  <option value="tahunan" <?= !empty($jenis) && $jenis == "Tahunan" ? 'selected' : ''; ?>>Laporan Tahunan</option>
+                                  <option value="bulanan" <?= !empty($jenis) && $jenis == "Bulanan" ? 'selected' : ''; ?>>Laporan Bulanan</option>
                               </select>
                           </div>
-                        </div>
                       </div>
-                    </div>
 
-                    
-                <?php endif; ?>
-            </div>
-            <!-- /.card-body -->
+                      <div class="form-group row">
+                          <label for="inputTahun" class="col-sm-4 col-form-label">Tahun</label>
+                          <div class="col-sm-8">
+                              <select id="inputTahun" class="form-control" name="tahun" required>
+                                  <?php
+                                  // Mendapatkan tahun unik dari tanggal
+                                  $tahun_unik = array_map(function($item) {
+                                      return date('Y', strtotime($item['unique_date']));
+                                  }, $tanggal);
+                                  $tahun_unik = array_unique($tahun_unik);
+                                  sort($tahun_unik); // Mengurutkan tahun
 
-            <div class="d-flex">
-                <button type="submit" class="btn btn-primary flex-fill m-3">Tampilkan Laporan</button>
-            </div>
-            <!-- /.card-footer -->
+                                  foreach ($tahun_unik as $tahun): ?>
+                                      <option value="<?= $tahun; ?>" <?= !empty($tahun) && $tahun == $tahun ? 'selected' : ''; ?>><?= $tahun; ?></option>
+                                  <?php endforeach; ?>
+                              </select>
+                              <div class="form-group row" id="bulanDiv" style="display: <?= !empty($jenis) && $jenis == "Bulanan" ? 'block' : 'none'; ?>;">
+                                  <label for="inputBulan" class="col-sm-12 col-form-label">Bulan</label>
+                                  <div class="col-sm-12">
+                                      <select id="inputBulan" class="form-control" name="bulan">
+                                          <option value="">Pilih Bulan</option>
+                                          <!-- Bulan akan diisi lewat JavaScript -->
+                                      </select>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+
+                  <?php endif; ?>
+              </div>
+              <!-- /.card-body -->
+
+              <div class="d-flex">
+                  <button type="submit" class="btn btn-primary flex-fill m-3">Tampilkan Laporan</button>
+              </div>
+              <!-- /.card-footer -->
           </form>
 
           <script>
               const tanggalData = <?= json_encode($tanggal); ?>; // Menyimpan data tanggal ke JavaScript
+              const selectedBulan = <?= json_encode($bulan); ?>; // Menyimpan bulan terpilih
+              const selectedTahun = <?= json_encode($tahun); ?>; // Menyimpan tahun terpilih
 
               document.getElementById('inputLaporan').addEventListener('change', function() {
                   var bulanDiv = document.getElementById('bulanDiv');
@@ -88,7 +90,7 @@
                   bulanSelect.innerHTML = '<option value="">Pilih Bulan</option>';
                   bulanSelect.required = false; // Set bulan not required initially
 
-                  // Sembunyikan bulanDiv jika jenis laporan bukan bulanan
+                  // Sembunyikan bulanDiv jika jenis laporan adalah tahunan
                   if (this.value === 'bulanan') {
                       bulanDiv.style.display = 'block';
                       bulanSelect.required = true; // Set bulan required if 'bulanan' is selected
@@ -97,7 +99,7 @@
                           updateBulan(tahunSelect.value);
                       }
                   } else {
-                      bulanDiv.style.display = 'none';
+                      bulanDiv.style.display = 'none'; // Hide bulanDiv if 'tahunan' is selected
                       bulanSelect.required = false; // Set bulan not required if 'tahunan' is selected
                   }
               });
@@ -127,19 +129,29 @@
 
                   // Mengisi dropdown bulan
                   bulanTersedia.forEach(bulan => {
-                      bulanSelect.innerHTML += `<option value="${bulan}">${new Intl.DateTimeFormat('id-ID', { month: 'long' }).format(new Date(2020, bulan - 1))}</option>`;
+                      bulanSelect.innerHTML += `<option value="${bulan}" ${bulan == selectedBulan ? 'selected' : ''}>${new Intl.DateTimeFormat('id-ID', { month: 'long' }).format(new Date(2020, bulan - 1))}</option>`;
                   });
 
                   // Tampilkan bulanDiv hanya jika ada bulan yang tersedia
                   const bulanDiv = document.getElementById('bulanDiv');
                   bulanDiv.style.display = (bulanTersedia.size > 0) ? 'block' : 'none';
               }
-          </script>
 
+              // Initialize the bulan dropdown if the selected tahun and bulan are set
+              if (selectedTahun) {
+                  document.getElementById('inputTahun').value = selectedTahun;
+                  updateBulan(selectedTahun); // Populate bulan dropdown
+              }
+
+              // Call the change event to set the initial visibility of bulanDiv
+              document.getElementById('inputLaporan').dispatchEvent(new Event('change'));
+          </script>
         </div>
       </div>
       <?php
         $formatTanggal = new \App\Libraries\DateConverter();
+        $formatrp = new \App\Libraries\CurrencyFormatter();
+        
         date_default_timezone_set("Asia/Jakarta");
       ?>
       <div class="container-fluid">
@@ -205,8 +217,8 @@
                                             <td><?= $index + 1; ?></td>
                                             <td><?= esc($item['date']); ?></td>
                                             <td><?= esc($item['keterangan']); ?></td>
-                                            <td><?= esc(number_format($item['pemasukan'], 2, ',', '.')); ?></td>
-                                            <td><?= esc(number_format($item['pengeluaran'], 2, ',', '.')); ?></td>
+                                            <td><?= esc($formatrp->formatRupiah($item['pemasukan'])); ?></td>
+                                            <td><?= esc($formatrp->formatRupiah($item['pengeluaran'])); ?></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
