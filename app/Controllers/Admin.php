@@ -5,6 +5,7 @@ use App\Models\Produk_model;
 use App\Models\Pengguna_model;
 use App\Models\Income_model;
 use App\Models\Expense_model;
+use App\Models\Report_model;
 use App\Libraries\CurrencyFormatter;
     
 class Admin extends BaseController
@@ -14,16 +15,15 @@ class Admin extends BaseController
         $data['title']     = 'Dashboard';
         $data['page']     = 'dashboard';
         $model = new Expense_model();
-        $data['pengeluaran'] = $model->getAllExpenses();
+        $data['pengeluaran'] = $model->getAllExpensesASC();
         $model = new Income_model();
-        $data['pemasukan'] = $model->getAllIncomes();
+        $data['pemasukan'] = $model->getAllIncomesASC();
         echo view('master/header', $data);
         echo view('master/navbar', $data);
         echo view('master/sidebar', $data);
         echo view('v_dashboard', $data);
         echo view('master/footer', $data);
     }
-
 
     //Pemasukan
     public function pemasukanindex()
@@ -97,6 +97,15 @@ class Admin extends BaseController
         // Validasi input nominal
         if (!is_numeric($totalisatorAwal) || !is_numeric($totalisatorAkhir) || !is_numeric($priceUnit) || !is_numeric($dipping1) || !is_numeric($dipping4)) {
             return redirect()->back()->withInput()->with('error', 'Masukkan harus berupa angka!');
+        }
+
+        // Ambil tanggal terbaru di database
+        $latestDateRecord = $model->orderBy('tanggal', 'DESC')->first();
+        $latestDate = $latestDateRecord['tanggal'] ?? null;
+
+        // Validasi tanggal lebih baru dari tanggal terbaru di database
+        if ($latestDate && strtotime($tanggal) < strtotime($latestDate)) {
+            return redirect()->back()->withInput()->with('error', 'Tanggal harus lebih baru dari tanggal terakhir yang ada di data!');
         }
 
         // Validasi tanggal duplikat
@@ -325,6 +334,24 @@ class Admin extends BaseController
     {
         $data['title']     = 'Laporan';
         $data['page']     = 'laporan';
+        $model = new Income_model();
+        $data['tanggal'] = $model->getUniqueDates();
+        $jenis = $this->request->getPost('jenis_laporan');
+        $tahun = $this->request->getPost('tahun');
+        
+        if (empty($jenis)){
+            $data['laporan']   = '';
+        } elseif ($jenis === "tahunan"){
+            $reportModel = new Report_model();
+            $data['laporan'] = $reportModel->getFinancialReport($tahun);
+        } elseif ($jenis === "bulanan"){
+            $bulan = $this->request->getPost('bulan');
+            $reportModel = new Report_model();
+            $data['laporan'] = $reportModel->getFinancialReport($tahun, $bulan);
+        }
+        $data['jenis']   = (empty($jenis)? '' : ucfirst($jenis));
+        $data['tahun']   = (empty($tahun)? '' : $tahun);
+        $data['bulan']   = (empty($bulan)? '' : $bulan);
         echo view('master/header', $data);
         echo view('master/navbar', $data);
         echo view('master/sidebar', $data);

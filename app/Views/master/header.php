@@ -19,7 +19,12 @@
   <!-- summernote -->
   <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    #dailyFinanceChart, #monthlyFinanceChart {
+    width: 100% !important;
+    height: 300px !important;
+}
+  </style>
 </head>
 <body class="hold-transition sidebar-mini layout-footer-fixed layout-navbar-fixed layout-fixed">
 <!-- Site wrapper -->

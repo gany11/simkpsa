@@ -31,7 +31,7 @@ $routes->add('/pengeluaran/edit/(:num)', 'Admin::pengeluaraneditindex/$1', ['fil
 $routes->add('/pengeluaran/delete/(:num)', 'Admin::pengeluarandelete/$1', ['filter' => 'login']);
 
 // Pemasukan
-$routes->get('/laporan', 'Admin::laporanindex', ['filter' => 'login']);
+$routes->add('/laporan', 'Admin::laporanindex', ['filter' => 'login']);
 
 // Produk
 $routes->get('/produk', 'Admin::produkindex', ['filter' => 'login']);

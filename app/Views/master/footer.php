@@ -31,84 +31,85 @@
 <script src="<?php echo base_url('assets/plugins/datatables-buttons/js/buttons.print.min.js')?>"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-$(document).ready(function() {
-    $('textarea').summernote();
-    
-    setTimeout(function() {
-        <?php
-        $session = session();
-        ?>
-        <?php if ($session->getFlashdata('sukses')): ?>
-            Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: '<?php echo $session->getFlashdata('sukses'); ?>',
-                confirmButtonText: 'OK'
-            });
-        <?php elseif ($session->getFlashdata('error')): ?>
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: '<?php echo $session->getFlashdata('error'); ?>',
-                confirmButtonText: 'OK'
-            });
-        <?php endif; ?>
-    }, 500); // Delay to ensure Summernote is initialized
-});
+    $(document).ready(function() {
+        $('textarea').summernote();
+        
+        setTimeout(function() {
+            <?php
+            $session = session();
+            ?>
+            <?php if ($session->getFlashdata('sukses')): ?>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: '<?php echo $session->getFlashdata('sukses'); ?>',
+                    confirmButtonText: 'OK'
+                });
+            <?php elseif ($session->getFlashdata('error')): ?>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: '<?php echo $session->getFlashdata('error'); ?>',
+                    confirmButtonText: 'OK'
+                });
+            <?php endif; ?>
+        }, 500); // Delay to ensure Summernote is initialized
+    });
 </script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Attach event listener to all elements with the 'delete-link' class
-    document.querySelectorAll('.delete-link').forEach(function(element) {
-        element.addEventListener('click', function(event) {
-            event.preventDefault(); // Prevent the default link action
+    document.addEventListener('DOMContentLoaded', function() {
+        // Attach event listener to all elements with the 'delete-link' class
+        document.querySelectorAll('.delete-link').forEach(function(element) {
+            element.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent the default link action
 
-            const url = this.href; // Get the URL from the link
+                const url = this.href; // Get the URL from the link
 
-            Swal.fire({
-                title: 'Apakah Anda yakin?',
-                text: "Data ini akan dihapus secara permanen!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Ya, hapus!',
-                cancelButtonText: 'Batal',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Redirect to the URL if confirmed
-                    window.location.href = url;
-                }
+                Swal.fire({
+                    title: 'Apakah Anda yakin?',
+                    text: "Data ini akan dihapus secara permanen!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Redirect to the URL if confirmed
+                        window.location.href = url;
+                    }
+                });
             });
         });
     });
-});
 </script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Attach event listener to all elements with the 'delete-link' class
-    document.querySelectorAll('.logout').forEach(function(element) {
-        element.addEventListener('click', function(event) {
-            event.preventDefault(); // Prevent the default link action
+    document.addEventListener('DOMContentLoaded', function() {
+        // Attach event listener to all elements with the 'delete-link' class
+        document.querySelectorAll('.logout').forEach(function(element) {
+            element.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent the default link action
 
-            const url = this.href; // Get the URL from the link
+                const url = this.href; // Get the URL from the link
 
-            Swal.fire({
-                title: 'Apakah Anda yakin ingin keluar?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Ya',
-                cancelButtonText: 'Batal',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Redirect to the URL if confirmed
-                    window.location.href = url;
-                }
+                Swal.fire({
+                    title: 'Apakah Anda yakin ingin keluar?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Redirect to the URL if confirmed
+                        window.location.href = url;
+                    }
+                });
             });
         });
     });
-});
 </script>
 <script>
   $(function () {

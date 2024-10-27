@@ -20,6 +20,11 @@ class Expense_model extends Model
         return $this->orderBy('date', 'DESC')->findAll();
     }
 
+    public function getAllExpensesASC()
+    {
+        return $this->orderBy('date', 'ASC')->findAll();
+    }
+
     // Mengambil deskripsi unik
     public function getUniqueDescriptions()
     {
@@ -35,5 +40,31 @@ class Expense_model extends Model
     public function getLatestExpense()
     {
         return $this->orderBy('date', 'DESC')->first();
+    }
+
+    //Report
+
+    public function getExpensesForReport($year, $month = null)
+    {
+        $this->select("date, desc AS keterangan, NULL AS pemasukan, nominal AS pengeluaran");
+        $this->where("YEAR(date)", $year);
+        
+        if ($month) {
+            $this->where("MONTH(date)", $month);
+        }
+
+        return $this->orderBy('date', 'ASC')->findAll();
+    }
+
+    public function calculateExpenseSummary($year, $month = null)
+    {
+        $this->selectSum('nominal', 'total_pengeluaran')
+             ->where("YEAR(date)", $year);
+
+        if ($month) {
+            $this->where("MONTH(date)", $month);
+        }
+
+        return $this->get()->getRowArray();
     }
 }

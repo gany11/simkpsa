@@ -32,6 +32,11 @@ class Income_model extends Model
         return $this->orderBy('tanggal', 'DESC')->findAll();
     }
 
+    public function getAllIncomesASC()
+    {
+        return $this->orderBy('tanggal', 'ASC')->findAll();
+    }
+
     // Mendapatkan data berdasarkan ID
     public function getIncomeById($id)
     {
@@ -48,5 +53,49 @@ class Income_model extends Model
     public function getLatestIncome()
     {
         return $this->orderBy('tanggal', 'DESC')->first();
+    }
+
+    public function getUniqueDates()
+    {
+        // Query untuk mengambil tanggal unik dari income dan expense
+        $query = $this->db->query("
+            SELECT DISTINCT unique_date FROM (
+                SELECT tanggal AS unique_date FROM income
+                UNION ALL
+                SELECT date AS unique_date FROM expense
+            ) AS combined_dates
+            ORDER BY unique_date
+        ");
+
+        return $query->getResultArray(); // Mengembalikan hasil sebagai array
+    }
+
+    //Report
+    public function getIncomesForReport($year, $month = null)
+    {
+        $this->select("tanggal AS date, CONCAT('Pemasukan ', tanggal) AS keterangan, total AS pemasukan, NULL AS pengeluaran");
+        $this->where("YEAR(tanggal)", $year);
+        
+        if ($month) {
+            $this->where("MONTH(tanggal)", $month);
+        }
+
+        return $this->orderBy('tanggal', 'ASC')->findAll();
+    }
+
+    public function calculateIncomeSummary($year, $month = null)
+    {
+        $this->selectSum('sales', 'total_sales')
+             ->selectSum('total', 'total_pendapatan')
+             ->selectSum('stok_terpakai', 'total_stok_terpakai')
+             ->selectSum('losses', 'total_losess')
+             ->selectSum('besar_pengiriman', 'total_pengiriman')
+             ->where("YEAR(tanggal)", $year);
+
+        if ($month) {
+            $this->where("MONTH(tanggal)", $month);
+        }
+
+        return $this->get()->getRowArray();
     }
 }

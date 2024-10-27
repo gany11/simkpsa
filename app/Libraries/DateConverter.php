@@ -49,4 +49,12 @@ class DateConverter
         }
         return null;
     }
+
+    public function getBulanNama($bulan)
+    {
+        if (array_key_exists($bulan, $this->months)) {
+            return $this->months[$bulan];
+        }
+        return null; // Return null if the month number is invalid
+    }
 }
