@@ -18,7 +18,7 @@ class Admin extends BaseController
         $year = date('Y');
         $month = date('m');
 
-        // Ambil data bulanan dari model
+        // Ambil data bulanan untuk bulan berjalan
         $monthlyIncome = $incomeModel->getMonthlyTotals($year, $month) ?? [
             'total_sales' => 0,
             'total_stok_terpakai' => 0,
@@ -31,18 +31,86 @@ class Admin extends BaseController
             'total_pengeluaran' => 0,
         ];
 
+        // Ambil data untuk grafik harian
+        // Ambil data harian dari model
+        $dailyIncome = $incomeModel->getDailyIncome($year, $month);
+        $dailyExpense = $expenseModel->getDailyExpense($year, $month);
+
+        // Siapkan data untuk grafik harian
+        $dailyData = [];
+
+        // Gabungkan data pendapatan
+        foreach ($dailyIncome as $income) {
+            $date = date('j', strtotime($income['tanggal'])); // Hari dalam bulan
+            $dailyData[$date] = [
+                'income' => (float)$income['total'],
+                'expense' => 0 // Inisialisasi expense ke 0
+            ];
+        }
+
+        // Gabungkan data pengeluaran
+        foreach ($dailyExpense as $expense) {
+            $date = date('j', strtotime($expense['date'])); // Hari dalam bulan
+            // Jika tanggal sudah ada, update expense, jika tidak, inisialisasi
+            if (!isset($dailyData[$date])) {
+                $dailyData[$date] = ['income' => 0, 'expense' => 0]; // Jika tanggal tidak ada income, set income ke 0
+            }
+            $dailyData[$date]['expense'] += (float)$expense['nominal']; // Tambah pengeluaran
+        }
+
+        // Ambil hanya tanggal yang memiliki data
+        $filteredData = array_filter($dailyData, function($data) {
+            return $data['income'] > 0 || $data['expense'] > 0;
+        });
+
+        // Urutkan berdasarkan tanggal
+        ksort($filteredData);
+
+        // Siapkan label dan nilai untuk grafik
+        $dailyLabels = array_keys($filteredData);
+        $dailyIncomeData = array_column($filteredData, 'income');
+        $dailyExpenseData = array_column($filteredData, 'expense');
+
+        // Ambil data untuk grafik bulanan
+        // Ambil data untuk grafik bulanan kumulatif
+        $graphMonthlyIncome = $incomeModel->getMonthlyIncome($year);
+        $graphMonthlyExpense = $expenseModel->getMonthlyExpense($year);
+
+        // Inisialisasi array lengkap dengan bulan 1 sampai 12
+        $monthlyIncomeData = array_fill(1, 12, 0); // Bulan 1 hingga 12 dengan nilai 0
+        $monthlyExpenseData = array_fill(1, 12, 0);
+
+        // Isi data pendapatan per bulan
+        foreach ($graphMonthlyIncome as $income) {
+            $monthlyIncomeData[(int)$income['month']] = (float)$income['total'];
+        }
+
+        // Isi data pengeluaran per bulan
+        foreach ($graphMonthlyExpense as $expense) {
+            $monthlyExpenseData[(int)$expense['month']] = (float)$expense['total'];
+        }
+
         $data = [
             'title' => 'Dashboard',
             'page' => 'dashboard',
             'monthlyIncome' => $monthlyIncome,
             'monthlyExpense' => $monthlyExpense,
+            'dailyLabels' => $dailyLabels,
+            'dailyIncomeData' => $dailyIncomeData,
+            'dailyExpenseData' => $dailyExpenseData,
+            'monthlyIncomeData' => $monthlyIncomeData,
+            'monthlyExpenseData' => $monthlyExpenseData,
+            'graphMonthlyIncome' => $graphMonthlyIncome,
+            'graphMonthlyExpense' => $graphMonthlyExpense,
         ];
+
         echo view('master/header', $data);
         echo view('master/navbar', $data);
         echo view('master/sidebar', $data);
         echo view('v_dashboard', $data);
         echo view('master/footer', $data);
     }
+
 
     //Pemasukan
     public function pemasukanindex()

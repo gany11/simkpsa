@@ -117,4 +117,24 @@ class Income_model extends Model
             ->first();
     }
 
+    //2
+    public function getDailyIncome($year, $month)
+    {
+        return $this->select('tanggal, total')
+                    ->where('YEAR(tanggal)', $year)
+                    ->where('MONTH(tanggal)', $month)
+                    ->orderBy('tanggal', 'ASC')
+                    ->findAll();
+    }
+
+
+    public function getMonthlyIncome($year)
+    {
+        return $this->select("MONTH(tanggal) as month, SUM(total) as total")
+                    ->where("YEAR(tanggal)", $year)
+                    ->groupBy("MONTH(tanggal)")
+                    ->orderBy("MONTH(tanggal)", "ASC")
+                    ->findAll();
+    }
+
 }

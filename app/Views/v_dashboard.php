@@ -102,20 +102,20 @@
             <div class="col-lg-6">
                 <div class="card">
                     <div class="card-header border-0">
-                        <h3 class="card-title">Keuangan Harian Bulan Ini</h3>
+                        <h3 class="card-title">Grafik Pendapatan & Pengeluaran Harian Bulan <?= date('F Y'); ?></h3>    
                     </div>
                     <div class="card-body">
-                        <canvas id="dailyFinanceChart"></canvas>
+                        <canvas id="dailyChart"></canvas>
                     </div>
                 </div>
             </div>
             <div class="col-lg-6">
                 <div class="card">
                     <div class="card-header border-0">
-                        <h3 class="card-title">Keuangan Bulan Ini</h3>
+                        <h3 class="card-title">Grafik Pendapatan & Pengeluaran Bulanan Tahun <?= date('Y');?></h3>
                     </div>
                     <div class="card-body">
-                        <canvas id="monthlyFinanceChart"></canvas>
+                        <canvas id="monthlyChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -123,6 +123,78 @@
 
     </section>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Data untuk Grafik Harian
+        const dailyLabels = <?= json_encode($dailyLabels) ?>;
+        const dailyIncomeData = <?= json_encode($dailyIncomeData) ?>;
+        const dailyExpenseData = <?= json_encode($dailyExpenseData) ?>;
+
+        const dailyCtx = document.getElementById('dailyChart').getContext('2d');
+        const dailyChart = new Chart(dailyCtx, {
+            type: 'line',
+            data: {
+                labels: dailyLabels,
+                datasets: [
+                    {
+                        label: 'Pendapatan Harian',
+                        data: dailyIncomeData,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1,
+                        fill: false
+                    },
+                    {
+                        label: 'Pengeluaran Harian',
+                        data: dailyExpenseData,
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1,
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Tanggal'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Jumlah (Rp)'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Data untuk Grafik Bulanan
+        const monthlyLabels = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        const monthlyIncomeData = <?= json_encode(array_values($monthlyIncomeData)) ?>;
+        const monthlyExpenseData = <?= json_encode(array_values($monthlyExpenseData)) ?>;
+
+        const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+        const monthlyChart = new Chart(monthlyCtx, {
+            type: 'bar',
+            data: {
+                labels: monthlyLabels,
+                datasets: [
+                    {
+                        label: 'Pendapatan Bulanan',
+                        data: monthlyIncomeData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                    },
+                    {
+                        label: 'Pengeluaran Bulanan',
+                        data: monthlyExpenseData,
+                        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                    }
+                ]
+            }
+        });
+    </script>
 
     <!-- /.content -->
   </div>

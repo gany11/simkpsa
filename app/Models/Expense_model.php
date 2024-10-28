@@ -76,4 +76,25 @@ class Expense_model extends Model
             ->where('MONTH(date)', $month)
             ->first();
     }
+
+    //2
+    public function getDailyExpense($year, $month)
+    {
+        return $this->select('date, nominal')
+                    ->where('YEAR(date)', $year)
+                    ->where('MONTH(date)', $month)
+                    ->orderBy('date', 'ASC')
+                    ->findAll();
+    }
+
+
+    public function getMonthlyExpense($year)
+    {
+        return $this->select("MONTH(date) as month, SUM(nominal) as total")
+                    ->where("YEAR(date)", $year)
+                    ->groupBy("MONTH(date)")
+                    ->orderBy("MONTH(date)", "ASC")
+                    ->findAll();
+    }
+
 }
