@@ -67,4 +67,13 @@ class Expense_model extends Model
 
         return $this->get()->getRowArray();
     }
+
+    //Dasboard
+    public function getMonthlyExpenses($year, $month)
+    {
+        return $this->select('SUM(nominal) as total_pengeluaran')
+            ->where('YEAR(date)', $year)
+            ->where('MONTH(date)', $month)
+            ->first();
+    }
 }

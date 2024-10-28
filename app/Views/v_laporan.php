@@ -160,7 +160,7 @@
             <?php if (empty($laporan['data'])): ?>
                 <!-- Bagian 1: Ketika laporan tidak ada -->
                 <div class="callout callout-info">
-                    <h5><i class="fas fa-info"></i> Isi Format Laporan Terlebih Dahulu Untuk Melihat Laporan!.</h5>
+                    <h5><i class="fas fa-info"></i> Isi Format Laporan Terlebih Dahulu Untuk Melihat Laporan!</h5>
                 </div>
             <?php else: ?>
                 <!-- Bagian 2: Ketika laporan ada -->
@@ -233,7 +233,7 @@
                                 <table class="table">
                                     <tr>
                                         <th style="width:50%">Total Sales:</th>
-                                        <td><?= esc(number_format($laporan['total_sales'], 2, ',', '.')); ?> liter</td>
+                                        <td><?= esc(number_format($laporan['total_sales'], 2, ',', '.')); ?> Liter</td>
                                     </tr>
                                     <tr>
                                         <th>Total Pendapatan:</th>
@@ -245,15 +245,19 @@
                                     </tr>
                                     <tr>
                                         <th>Total Stok Terpakai:</th>
-                                        <td><?= esc(number_format($laporan['total_stok_terpakai'], 2, ',', '.')); ?> liter</td>
+                                        <td><?= esc(number_format($laporan['total_stok_terpakai'], 2, ',', '.')); ?> Liter</td>
                                     </tr>
                                     <tr>
                                         <th>Total Losses:</th>
-                                        <td><?= esc(number_format($laporan['total_losess'], 2, ',', '.')); ?> liter</td>
+                                        <td><?= esc(number_format($laporan['total_losess'], 2, ',', '.')); ?> Liter</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Total Pumptes:</th>
+                                        <td><?= esc(number_format($laporan['total_tes'], 2, ',', '.')); ?> Liter (<?= esc($laporan['jumlah_pumptes']); ?> Pumptes)</td>
                                     </tr>
                                     <tr>
                                         <th>Total Pengiriman:</th>
-                                        <td><?= esc(number_format($laporan['total_pengiriman'], 2, ',', '.')); ?> liter</td>
+                                        <td><?= esc(number_format($laporan['total_pengiriman'], 2, ',', '.')); ?> Liter (<?= esc($laporan['jumlah_pengiriman']); ?> Pengiriman)</td>
                                     </tr>
                                 </table>
                             </div>

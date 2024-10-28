@@ -12,12 +12,31 @@ class Admin extends BaseController
 {
     public function index()
     {
-        $data['title']     = 'Dashboard';
-        $data['page']     = 'dashboard';
-        $model = new Expense_model();
-        $data['pengeluaran'] = $model->getAllExpensesASC();
-        $model = new Income_model();
-        $data['pemasukan'] = $model->getAllIncomesASC();
+        $incomeModel = new Income_model();
+        $expenseModel = new Expense_model();
+
+        $year = date('Y');
+        $month = date('m');
+
+        // Ambil data bulanan dari model
+        $monthlyIncome = $incomeModel->getMonthlyTotals($year, $month) ?? [
+            'total_sales' => 0,
+            'total_stok_terpakai' => 0,
+            'total_pendapatan' => 0,
+            'total_losses' => 0,
+            'total_pengiriman' => 0,
+        ];
+
+        $monthlyExpense = $expenseModel->getMonthlyExpenses($year, $month) ?? [
+            'total_pengeluaran' => 0,
+        ];
+
+        $data = [
+            'title' => 'Dashboard',
+            'page' => 'dashboard',
+            'monthlyIncome' => $monthlyIncome,
+            'monthlyExpense' => $monthlyExpense,
+        ];
         echo view('master/header', $data);
         echo view('master/navbar', $data);
         echo view('master/sidebar', $data);
@@ -80,7 +99,7 @@ class Admin extends BaseController
         $session = \Config\Services::session();
         $model = new Income_model();
         
-        $x = 20.1459;
+        $x = 20.14596;
         // Ambil ID pemasukan dari parameter post
         $id = $this->request->getPost('id');
         

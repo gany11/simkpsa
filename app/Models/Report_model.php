@@ -36,8 +36,11 @@ class Report_model extends Model
             'total_pendapatan' => $incomeSummary['total_pendapatan'],
             'total_pengeluaran' => $expenseSummary['total_pengeluaran'],
             'total_stok_terpakai' => $incomeSummary['total_stok_terpakai'],
-            'total_losess' => $incomeSummary['total_losess'],
+            'total_losess' => $incomeSummary['total_losses'],
             'total_pengiriman' => $incomeSummary['total_pengiriman'],
+            'total_tes' => $incomeSummary['total_tes'],
+            'jumlah_pengiriman' => $incomeSummary['jumlah_pengiriman'],
+            'jumlah_pumptes' => $incomeSummary['jumlah_pumptes'],
         ];
     }
 }

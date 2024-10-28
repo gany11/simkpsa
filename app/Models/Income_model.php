@@ -86,11 +86,14 @@ class Income_model extends Model
     public function calculateIncomeSummary($year, $month = null)
     {
         $this->selectSum('sales', 'total_sales')
-             ->selectSum('total', 'total_pendapatan')
-             ->selectSum('stok_terpakai', 'total_stok_terpakai')
-             ->selectSum('losses', 'total_losess')
-             ->selectSum('besar_pengiriman', 'total_pengiriman')
-             ->where("YEAR(tanggal)", $year);
+            ->selectSum('total', 'total_pendapatan')
+            ->selectSum('stok_terpakai', 'total_stok_terpakai')
+            ->selectSum('losses', 'total_losses')
+            ->selectSum('besar_pengiriman', 'total_pengiriman')
+            ->selectSum('besartes', 'total_tes')
+            ->select('SUM(CASE WHEN pengiriman = "yes" THEN 1 ELSE 0 END) AS jumlah_pengiriman')
+            ->select('SUM(CASE WHEN pumptes = "yes" THEN 1 ELSE 0 END) AS jumlah_pumptes')
+            ->where("YEAR(tanggal)", $year);
 
         if ($month) {
             $this->where("MONTH(tanggal)", $month);
@@ -98,4 +101,20 @@ class Income_model extends Model
 
         return $this->get()->getRowArray();
     }
+
+    //Dashboard
+    public function getMonthlyTotals($year, $month)
+    {
+        return $this->select('
+                SUM(sales) AS total_sales, 
+                SUM(total) AS total_pendapatan, 
+                SUM(stok_terpakai) AS total_stok_terpakai, 
+                SUM(losses) AS total_losses, 
+                SUM(besar_pengiriman) AS total_pengiriman
+            ')
+            ->where('YEAR(tanggal)', $year)
+            ->where('MONTH(tanggal)', $month)
+            ->first();
+    }
+
 }

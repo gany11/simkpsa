@@ -76,7 +76,7 @@
 
                         <!-- Dipping 1 dan Dipping 4 -->
                         <div class="form-group row">
-                            <label class="col-sm-4 col-form-label">Dipping Terakhir (Saat Penutupan Kemarin)</label>
+                            <label class="col-sm-4 col-form-label">Dipping Terakhir / Saat Penutupan Kemarin (Cm)</label>
                             <div class="col-sm-8">
                                 <input type="number" class="form-control mt-2" name="dipping1" 
                                     placeholder="Dipping Terakhir (Saat Penutupan Kemarin)" 
@@ -85,7 +85,7 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-sm-4 col-form-label">Dipping Saat Penutupan</label>
+                            <label class="col-sm-4 col-form-label">Dipping Saat Penutupan (Cm)</label>
                             <div class="col-sm-8">
                                 <input type="number" class="form-control mt-2" name="dipping4" 
                                     placeholder="Dipping Saat Penutupan" 
@@ -112,7 +112,7 @@
                                         <option value="Malam" <?= (!empty($pemasukan) && $pemasukan['waktupengiriman'] === 'Malam') ? 'selected' : ''; ?>>Malam</option>
                                     </select>
 
-                                    <label class="col-form-label mt-2">Dipping Sebelum dan Sesudah Bongkar Pengiriman</label>
+                                    <label class="col-form-label mt-2">Dipping Sebelum dan Sesudah Bongkar Pengiriman (Cm)</label>
                                     <input type="number" class="form-control mt-2 dipping-input" name="dipping2" 
                                         placeholder="Dipping Sebelum Bongkar Pengiriman" 
                                         value="<?= (empty($pemasukan) ? '' : $pemasukan['dipping2']); ?>" 

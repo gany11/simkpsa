@@ -40,7 +40,7 @@
             </li>
             <li class="list-group-item d-flex justify-content-between">
                 <b>Stok Terbaru<br>(<?= isset($terakhir) ? $formatTanggal->formatTanggalBulanText($terakhir['tanggal']) : 'Tidak ada update' ?>)</b>
-                <span><?= isset($terakhir) ? $formatribuan->format($terakhir['dipping4']*20.1459) . ' Liter' : 'Data tidak tersedia' ?></span>
+                <span><?= isset($terakhir) ? $formatribuan->format($terakhir['dipping4']*20.14596) . ' Liter' : 'Data tidak tersedia' ?></span>
             </li>
           </ul>
 
