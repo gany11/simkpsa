@@ -253,11 +253,11 @@
                                     </tr>
                                     <tr>
                                         <th>Total Pumptes:</th>
-                                        <td><?= esc(number_format($laporan['total_tes'], 2, ',', '.')); ?> Liter (<?= esc($laporan['jumlah_pumptes']); ?> Pumptes)</td>
+                                        <td><?= esc(number_format($laporan['total_tes'], 2, ',', '.')); ?> Liter (<?= esc(number_format($laporan['jumlah_pumptes'])); ?> Pumptes)</td>
                                     </tr>
                                     <tr>
                                         <th>Total Pengiriman:</th>
-                                        <td><?= esc(number_format($laporan['total_pengiriman'], 2, ',', '.')); ?> Liter (<?= esc($laporan['jumlah_pengiriman']); ?> Pengiriman)</td>
+                                        <td><?= esc(number_format($laporan['total_pengiriman'], 2, ',', '.')); ?> Liter (<?= esc(number_format($laporan['jumlah_pengiriman'])); ?> Pengiriman)</td>
                                     </tr>
                                 </table>
                             </div>
