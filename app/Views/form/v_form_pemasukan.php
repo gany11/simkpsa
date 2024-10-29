@@ -46,6 +46,7 @@
                                     name="totalisator_awal" 
                                     value="<?= (empty($pemasukan) ? (empty($terakhir) ? '' : $terakhir['totalisator_akhir']) : $pemasukan['totalisator_awal']); ?>" 
                                     step="0.01" 
+                                    min="0"
                                     required>
                             </div>
                         </div>
@@ -58,6 +59,7 @@
                                     name="totalisator_akhir" 
                                     value="<?= (empty($pemasukan) ? '' : $pemasukan['totalisator_akhir']); ?>" 
                                     step="0.01" 
+                                    min="0"
                                     required>
                             </div>
                         </div>
@@ -70,6 +72,7 @@
                                     name="harga_satuan" 
                                     value="<?= (empty($pemasukan) ? (empty($produk) ? '' : $produk['harga_jual']) : $pemasukan['price_unit']); ?>" 
                                     step="0.01" 
+                                    min="0"
                                     required>
                             </div>
                         </div>
@@ -81,7 +84,9 @@
                                 <input type="number" class="form-control mt-2" name="dipping1" 
                                     placeholder="Dipping Terakhir (Saat Penutupan Kemarin)" 
                                     value="<?= (empty($pemasukan) ? (empty($terakhir) ? '' : $terakhir['dipping4']) : $pemasukan['dipping1']); ?>" 
-                                    step="0.01" required>
+                                    step="0.01" 
+                                    min="0"
+                                    required>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -90,7 +95,9 @@
                                 <input type="number" class="form-control mt-2" name="dipping4" 
                                     placeholder="Dipping Saat Penutupan" 
                                     value="<?= (empty($pemasukan) ? '' : $pemasukan['dipping4']); ?>" 
-                                    step="0.01" required>
+                                    step="0.01" 
+                                    min="0"
+                                    required>
                             </div>
                         </div>
 
@@ -116,11 +123,13 @@
                                     <input type="number" class="form-control mt-2 dipping-input" name="dipping2" 
                                         placeholder="Dipping Sebelum Bongkar Pengiriman" 
                                         value="<?= (empty($pemasukan) ? '' : $pemasukan['dipping2']); ?>" 
-                                        step="0.01">
+                                        step="0.01" 
+                                        min="0">
                                     <input type="number" class="form-control mt-2 dipping-input" name="dipping3" 
                                         placeholder="Dipping Setelah Bongkar Pengiriman" 
                                         value="<?= (empty($pemasukan) ? '' : $pemasukan['dipping3']); ?>" 
-                                        step="0.01">
+                                        step="0.01" 
+                                        min="0">
                                 </div>
                             </div>
                         </div>
@@ -138,7 +147,7 @@
                                 <input type="number" class="form-control mt-2" id="besartesInput" name="besartes" 
                                     placeholder="Besartes" 
                                     value="<?= (empty($pemasukan) ? '' : $pemasukan['besartes']); ?>" 
-                                    step="0.01" 
+                                    step="0.01" min="0"
                                     style="display: none;">
                             </div>
                         </div>

@@ -72,23 +72,41 @@ class Admin extends BaseController
         $dailyExpenseData = array_column($filteredData, 'expense');
 
         // Ambil data untuk grafik bulanan
-        // Ambil data untuk grafik bulanan kumulatif
-        $graphMonthlyIncome = $incomeModel->getMonthlyIncome($year);
-        $graphMonthlyExpense = $expenseModel->getMonthlyExpense($year);
+        // Ambil data bulanan dari model
+        $monthlyIncome2 = $incomeModel->getMonthlyIncome($year);
+        $monthlyExpense2 = $expenseModel->getMonthlyExpense($year);
 
-        // Inisialisasi array lengkap dengan bulan 1 sampai 12
-        $monthlyIncomeData = array_fill(1, 12, 0); // Bulan 1 hingga 12 dengan nilai 0
-        $monthlyExpenseData = array_fill(1, 12, 0);
+        // Gabungkan data pendapatan dan pengeluaran per bulan
+        $monthlyData = [];
 
-        // Isi data pendapatan per bulan
-        foreach ($graphMonthlyIncome as $income) {
-            $monthlyIncomeData[(int)$income['month']] = (float)$income['total'];
+        // Data pendapatan bulanan
+        foreach ($monthlyIncome2 as $income) {
+            $month = (int)$income['month']; // Konversi bulan ke integer untuk urutan yang benar
+            $monthlyData[$month] = [
+                'income' => (float)$income['total'],
+                'expense' => 0 // Inisialisasi pengeluaran ke 0
+            ];
         }
 
-        // Isi data pengeluaran per bulan
-        foreach ($graphMonthlyExpense as $expense) {
-            $monthlyExpenseData[(int)$expense['month']] = (float)$expense['total'];
+        // Data pengeluaran bulanan
+        foreach ($monthlyExpense2 as $expense) {
+            $month = (int)$expense['month'];
+            if (!isset($monthlyData[$month])) {
+                $monthlyData[$month] = ['income' => 0, 'expense' => 0];
+            }
+            $monthlyData[$month]['expense'] += (float)$expense['total']; // Tambah pengeluaran
         }
+
+        // Filter hanya bulan dengan data dan urutkan berdasarkan bulan
+        ksort($monthlyData);
+
+        // Siapkan label dan nilai untuk grafik
+        $monthlyLabels = array_map(function ($month) {
+            return date("F", mktime(0, 0, 0, $month, 1)); // Nama bulan
+        }, array_keys($monthlyData));
+        
+        $monthlyIncomeData = array_column($monthlyData, 'income');
+        $monthlyExpenseData = array_column($monthlyData, 'expense');
 
         $data = [
             'title' => 'Dashboard',
@@ -98,10 +116,9 @@ class Admin extends BaseController
             'dailyLabels' => $dailyLabels,
             'dailyIncomeData' => $dailyIncomeData,
             'dailyExpenseData' => $dailyExpenseData,
+            'monthlyLabels' => $monthlyLabels,
             'monthlyIncomeData' => $monthlyIncomeData,
             'monthlyExpenseData' => $monthlyExpenseData,
-            'graphMonthlyIncome' => $graphMonthlyIncome,
-            'graphMonthlyExpense' => $graphMonthlyExpense,
         ];
 
         echo view('master/header', $data);
@@ -180,6 +197,11 @@ class Admin extends BaseController
         $dipping4 = (float) htmlspecialchars($this->request->getPost('dipping4'));
         $pengiriman = htmlspecialchars($this->request->getPost('pengiriman'));
         $pumptes = htmlspecialchars($this->request->getPost('pumtes'));
+        $tanggalHariIni = date("Y-m-d");
+
+        if ($tanggal === false || $tanggal > $tanggalHariIni) {
+            return redirect()->back()->withInput()->with('error', 'Tanggal tidak boleh melebihi tanggal hari ini!');
+        }
 
         // Validasi input nominal
         if (!is_numeric($totalisatorAwal) || !is_numeric($totalisatorAkhir) || !is_numeric($priceUnit) || !is_numeric($dipping1) || !is_numeric($dipping4)) {
@@ -314,8 +336,13 @@ class Admin extends BaseController
         // Ambil data dari input
         $date = $this->request->getPost('date');
         $desc = $this->request->getPost('desc');
-        $otherDesc = $this->request->getPost('other_desc');
+        $otherDesc = htmlspecialchars($this->request->getPost('other_desc'));
         $nominal = $this->request->getPost('nominal');
+        $tanggalHariIni = date("Y-m-d");
+
+        if ($date === false || $date > $tanggalHariIni) {
+            return redirect()->back()->withInput()->with('error', 'Tanggal tidak boleh melebihi tanggal hari ini!');
+        }
     
         // Jika deskripsi "Lainnya" dipilih, gunakan input teks
         if ($desc === 'Lainnya') {

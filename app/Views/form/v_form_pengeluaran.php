@@ -60,6 +60,7 @@
                                     name="nominal" 
                                     value="<?= (empty($pengeluaran) ? '' : $pengeluaran['nominal']); ?>" 
                                     step="0.01" 
+                                    min="0"
                                     required>
                             </div>
                         </div>

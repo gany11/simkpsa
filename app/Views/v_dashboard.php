@@ -171,29 +171,31 @@
         });
 
         // Data untuk Grafik Bulanan
-        const monthlyLabels = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-        const monthlyIncomeData = <?= json_encode(array_values($monthlyIncomeData)) ?>;
-        const monthlyExpenseData = <?= json_encode(array_values($monthlyExpenseData)) ?>;
+        // Data untuk Grafik Bulanan
+    const monthlyLabels = <?= json_encode($monthlyLabels) ?>;
+    const monthlyIncomeData = <?= json_encode($monthlyIncomeData) ?>;
+    const monthlyExpenseData = <?= json_encode($monthlyExpenseData) ?>;
 
-        const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
-        const monthlyChart = new Chart(monthlyCtx, {
-            type: 'bar',
-            data: {
-                labels: monthlyLabels,
-                datasets: [
-                    {
-                        label: 'Pendapatan Bulanan',
-                        data: monthlyIncomeData,
-                        backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                    },
-                    {
-                        label: 'Pengeluaran Bulanan',
-                        data: monthlyExpenseData,
-                        backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                    }
-                ]
-            }
-        });
+    const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+    const monthlyChart = new Chart(monthlyCtx, {
+        type: 'bar',
+        data: {
+            labels: monthlyLabels,
+            datasets: [
+                {
+                    label: 'Pendapatan Bulanan',
+                    data: monthlyIncomeData,
+                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                },
+                {
+                    label: 'Pengeluaran Bulanan',
+                    data: monthlyExpenseData,
+                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                }
+            ]
+        }
+    });
+
     </script>
 
     <!-- /.content -->

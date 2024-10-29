@@ -34,6 +34,7 @@
                                     name="hargabeli" 
                                     value="<?= (empty($produk) ? '' : $produk["harga_beli"]) ?>" 
                                     step="0.01" 
+                                    min="0"
                                     required>
                             </div>
                         </div>
@@ -46,6 +47,7 @@
                                     name="hargajual" 
                                     value="<?= (empty($produk) ? '' : $produk["harga_jual"]) ?>" 
                                     step="0.01" 
+                                    min="0"
                                     required>
                             </div>
                         </div>
