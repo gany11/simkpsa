@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 27, 2024 at 10:43 AM
+-- Generation Time: Oct 30, 2024 at 06:08 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.0.25
 
@@ -39,9 +39,14 @@ CREATE TABLE `expense` (
 --
 
 INSERT INTO `expense` (`id`, `date`, `desc`, `nominal`) VALUES
-(14, '2024-10-27', 'Modal', '30000000.00'),
-(16, '2024-10-16', 'Modal', '1111111.00'),
-(17, '2024-09-12', 'Modal', '30000000.00');
+(19, '2024-10-08', 'Modal', '30000000.00'),
+(20, '2024-09-11', 'Modal', '30000000.00'),
+(21, '2024-10-28', 'Modal', '15000000.00'),
+(22, '2024-10-16', 'Modal', '11111111.00'),
+(23, '2025-01-15', 'Modal', '40000.00'),
+(24, '2024-05-14', 'Modal', '44444444.00'),
+(25, '2024-10-28', 'Listrik', '2000000.00'),
+(26, '2024-10-29', 'Modal', '11111111.00');
 
 -- --------------------------------------------------------
 
@@ -76,7 +81,7 @@ CREATE TABLE `income` (
 
 INSERT INTO `income` (`id`, `tanggal`, `totalisator_awal`, `totalisator_akhir`, `sales`, `price_unit`, `total`, `dipping1`, `dipping2`, `dipping3`, `dipping4`, `pengiriman`, `pumptes`, `besartes`, `losses`, `besar_pengiriman`, `waktupengiriman`, `stok_terpakai`) VALUES
 (5, '2024-10-01', '297388.26', '298749.04', '1360.78', '12000.00', '16329360.00', '122.70', NULL, NULL, '55.20', 'no', 'no', NULL, '0.93', NULL, NULL, '1359.85'),
-(7, '2024-10-27', '298749.04', '300000.00', '1250.96', '12000.00', '15011520.00', '55.20', NULL, NULL, '10.00', 'no', 'no', NULL, '340.37', NULL, NULL, '910.59');
+(9, '2024-10-28', '298749.04', '299500.00', '750.96', '11000.00', '8260560.00', '55.20', NULL, NULL, '10.00', 'no', 'no', NULL, '-159.64', NULL, NULL, '910.60');
 
 -- --------------------------------------------------------
 
@@ -141,7 +146,7 @@ CREATE TABLE `produk` (
 --
 
 INSERT INTO `produk` (`id`, `harga_jual`, `harga_beli`) VALUES
-(1, '12000.00', '10123.45');
+(1, '12000.00', '11000.00');
 
 --
 -- Indexes for dumped tables
@@ -187,13 +192,13 @@ ALTER TABLE `produk`
 -- AUTO_INCREMENT for table `expense`
 --
 ALTER TABLE `expense`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `income`
 --
 ALTER TABLE `income`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `migrations`
