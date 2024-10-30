@@ -11,7 +11,7 @@
 	<!-- Google font -->
 	<link href="https://fonts.googleapis.com/css?family=Cabin:400,700" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Montserrat:900" rel="stylesheet">
-    <link rel="icon" type="image/x-icon" href="<?php echo base_url('favicon.ico');?>">
+    <link rel="icon" type="image/x-icon" href="<?php echo base_url('assets/images/icon.png');?>">
 
     <style>
         * {

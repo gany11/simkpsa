@@ -23,7 +23,7 @@
         <div class="card-body box-profile">
           <div class="text-center">
             <img class="profile-user-img img-fluid img-circle"
-                src="<?php echo base_url('favicon.ico');?>"
+                src="<?php echo base_url('assets/images/icon.png');?>"
                 alt="PT Perta Sakti Abadi">
           </div>
 
