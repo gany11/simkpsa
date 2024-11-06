@@ -6,13 +6,13 @@ use CodeIgniter\Model;
  
 class Expense_model extends Model
 {
-    protected $table = 'expense'; // Nama tabel
-    protected $primaryKey = 'id'; // Primary key
+    protected $table = 'expense';
+    protected $primaryKey = 'id';
     protected $allowedFields = [
         'date',
         'desc',
         'nominal',
-    ]; // Kolom yang bisa diisi
+    ];
 
     // Mendapatkan semua data
     public function getAllExpenses()
@@ -43,7 +43,6 @@ class Expense_model extends Model
     }
 
     //Report
-
     public function getExpensesForReport($year, $month = null)
     {
         $this->select("date, desc AS keterangan, NULL AS pemasukan, nominal AS pengeluaran");
@@ -77,7 +76,6 @@ class Expense_model extends Model
             ->first();
     }
 
-    //2
     public function getDailyExpense($year, $month)
     {
         return $this->select('date, nominal')

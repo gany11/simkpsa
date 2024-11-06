@@ -6,8 +6,8 @@ use CodeIgniter\Model;
  
 class Income_model extends Model
 {
-    protected $table = 'income'; // Nama tabel
-    protected $primaryKey = 'id'; // Primary key
+    protected $table = 'income';
+    protected $primaryKey = 'id';
     protected $allowedFields    = [
         'tanggal', 'totalisator_awal', 'totalisator_akhir', 'sales', 'price_unit', 'total', 'dipping1', 'dipping2',
         'dipping3', 'dipping4', 'pengiriman', 'pumptes', 'besartes', 'losses', 'besar_pengiriman', 'waktupengiriman', 'stok_terpakai'
@@ -57,7 +57,6 @@ class Income_model extends Model
 
     public function getUniqueDates()
     {
-        // Query untuk mengambil tanggal unik dari income dan expense
         $query = $this->db->query("
             SELECT DISTINCT unique_date FROM (
                 SELECT tanggal AS unique_date FROM income
@@ -67,7 +66,7 @@ class Income_model extends Model
             ORDER BY unique_date
         ");
 
-        return $query->getResultArray(); // Mengembalikan hasil sebagai array
+        return $query->getResultArray();
     }
 
     //Report
@@ -117,7 +116,6 @@ class Income_model extends Model
             ->first();
     }
 
-    //2
     public function getDailyIncome($year, $month)
     {
         return $this->select('tanggal, total')
