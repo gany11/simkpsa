@@ -186,19 +186,33 @@ class Admin extends BaseController
             return redirect()->back()->withInput()->with('error', 'Masukkan harus berupa angka!');
         }
 
+        if ($totalisatorAkhir <= $totalisatorAwal) {
+            return redirect()->back()->withInput()->with('error', 'Totalisator Akhir harus lebih besar dari Totalisator Awal.');
+        }
+
         $latestDateRecord = $model->orderBy('tanggal', 'DESC')->first();
         $latestDate = $latestDateRecord['tanggal'] ?? null;
 
-        if ($latestDate && strtotime($tanggal) < strtotime($latestDate)) {
-            return redirect()->back()->withInput()->with('error', 'Tanggal harus lebih baru dari tanggal terakhir yang ada di data!');
-        }
+        $latestDateId = $latestDateRecord['id'] ?? null;
 
         if ($id) {
-            $existingRecord = $model->findPemasukanByDate($tanggal);
-            if ($existingRecord && $existingRecord['id'] !== $id) {
-                return redirect()->back()->with('error', 'Tanggal sudah ada di data lain');
+            if (strtotime($tanggal) < strtotime($latestDate)) {
+                if ($id === $latestDateId) {
+                    $secondLatestDateRecord = $model->orderBy('tanggal', 'DESC')->offset(1)->limit(1)->get()->getRowArray();
+                    if ($secondLatestDateRecord && strtotime($tanggal) <= strtotime($secondLatestDateRecord['tanggal'])) {
+                        return redirect()->back()->withInput()->with('error', 'Tanggal tidak boleh lebih kecil atau sama dengan tanggal kedua terbaru!');
+                    }
+                } else {
+                    $existingRecord = $model->findPemasukanByDate($tanggal);
+                    if ($existingRecord && $existingRecord['id'] !== $id) {
+                        return redirect()->back()->with('error', 'Tanggal sudah ada di data lain.');
+                    }
+                }
             }
         } else {
+            if ($latestDate && strtotime($tanggal) < strtotime($latestDate)) {
+                return redirect()->back()->withInput()->with('error', 'Tanggal harus lebih baru dari tanggal terakhir yang ada di data!');
+            }
             if ($model->findPemasukanByDate($tanggal)) {
                 return redirect()->back()->with('error', 'Tanggal sudah ada');
             }
@@ -216,6 +230,9 @@ class Admin extends BaseController
         $besarPengiriman = $pengiriman === 'yes' ? ($dipping3-$dipping2) *$x : null;
         
         if ($pengiriman === 'no') {
+            if ($dipping1 < $dipping4) {
+                return redirect()->back()->withInput()->with('error', 'Diping Akhir harus lebih kecil dari Diping Awal.');
+            }
             $stokTerpakai = ($dipping1 - $dipping4)*$x;
         } else {
             $stokTerpakai = $waktupengiriman === 'Malam' 
