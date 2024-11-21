@@ -152,11 +152,17 @@ class Admin extends BaseController
             session()->setFlashdata('error', 'Pemasukan tidak ditemukan.');
             return redirect()->to('pemasukan');
         } else {
-            echo view('master/header', $data);
-            echo view('master/navbar', $data);
-            echo view('master/sidebar', $data);
-            echo view('form/v_form_pemasukan', $data);
-            echo view('master/footer', $data);
+            $latestDateRecord = $model->orderBy('tanggal', 'DESC')->first();
+            $latestDate = $latestDateRecord['tanggal'] ?? null;
+            if ($latestDate && $data['pemasukan']['tanggal'] !== $latestDate) {
+                return redirect()->back()->with('error', 'Tanggal pada data ini bukan tanggal terbaru di database!');
+            } else {
+                 echo view('master/header', $data);
+                echo view('master/navbar', $data);
+                echo view('master/sidebar', $data);
+                echo view('form/v_form_pemasukan', $data);
+                echo view('master/footer', $data);
+            }
         }
     }
 
@@ -168,6 +174,22 @@ class Admin extends BaseController
         $x = 20.14596;
         $id = $this->request->getPost('id');
         
+
+        if ($id) {
+            $income = $model->find($id);
+        
+            if (empty($income)) {
+                return redirect()->back()->withInput()->with('error', 'Gagal mengubah data! ID tidak valid atau tidak ditemukan!');
+            }
+        
+            $latestDateRecord = $model->orderBy('tanggal', 'DESC')->first();
+            $latestDate = $latestDateRecord['tanggal'] ?? null;
+        
+            if ($latestDate && $income['tanggal'] !== $latestDate) {
+                return redirect()->back()->withInput()->with('error', 'Tanggal awal pada data ini bukan tanggal terbaru di database!');
+            }
+        }        
+
         $tanggal = htmlspecialchars($this->request->getPost('tanggal'));
         $totalisatorAwal = (float) htmlspecialchars($this->request->getPost('totalisator_awal'));
         $totalisatorAkhir = (float) htmlspecialchars($this->request->getPost('totalisator_akhir'));
@@ -281,16 +303,23 @@ class Admin extends BaseController
 
         $income = $model->find($id);
 
-        if ($income) {
-            $model->delete($id);
-            $session->setFlashdata('sukses', 'Data berhasil dihapus!');
-        } else {
-            $session->setFlashdata('error', 'ID tidak valid atau tidak ditemukan.');
+        if (!$income) {
+            return redirect()->back()->with('error', 'ID tidak valid atau tidak ditemukan.');
         }
 
-        return redirect()->to('pemasukan');
-    }
+        $latestDateRecord = $model->orderBy('tanggal', 'DESC')->first();
+        $latestDate = $latestDateRecord['tanggal'] ?? null;
 
+        if ($latestDate && $income['tanggal'] !== $latestDate) {
+            return redirect()->back()->with('error', 'Tanggal pada data ini bukan tanggal terbaru di database!');
+        }
+
+        if ($model->delete($id)) {
+            return redirect()->back()->with('sukses', 'Data berhasil dihapus!');
+        } else {
+            return redirect()->back()->with('error', 'Data gagal dihapus. Silakan coba lagi.');
+        }
+    }
 
     //Pengeluaran
     public function pengeluaranindex()
@@ -313,6 +342,12 @@ class Admin extends BaseController
     
         $id = $this->request->getPost('id');
     
+        if ($id) {
+            $pengeluaran = $model->find($id);
+            if (empty($pengeluaran)) {
+                return redirect()->back()->withInput()->with('error', 'Gagal memperbaharui data pengeluaran! Data tidak ditemukan.');
+            }
+        } 
         $date = $this->request->getPost('date');
         $desc = $this->request->getPost('desc');
         $otherDesc = htmlspecialchars($this->request->getPost('other_desc'));
